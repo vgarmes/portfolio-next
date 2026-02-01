@@ -1,11 +1,18 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { useId } from "react";
+import { useEffect, useId, useState } from "react";
 
 const ThemeSwitcher: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
   const { theme, setTheme } = useTheme();
   const id = useId();
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
   return (
     <fieldset className="flex h-8 w-fit items-center rounded-full shadow-[0_0_0_1px_var(--border)]">
       <legend className="sr-only">Select a display theme</legend>
@@ -20,7 +27,7 @@ const ThemeSwitcher: React.FC = () => {
             aria-label="system"
             value="system"
             className="sr-only"
-            checked={theme === "system"}
+            checked={mounted && theme === "system"}
             onChange={() => {
               setTheme("system");
             }}
@@ -52,7 +59,7 @@ const ThemeSwitcher: React.FC = () => {
             aria-label="light"
             className="sr-only"
             value="light"
-            checked={theme === "light"}
+            checked={mounted && theme === "light"}
             onChange={() => {
               setTheme("light");
             }}
@@ -91,7 +98,7 @@ const ThemeSwitcher: React.FC = () => {
             aria-label="dark"
             className="sr-only"
             value="dark"
-            checked={theme === "dark"}
+            checked={mounted && theme === "dark"}
             onChange={() => {
               setTheme("dark");
             }}
