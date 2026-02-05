@@ -1,0 +1,9 @@
+const Aside: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return (
+    <aside className="static top-32 left-20 max-h-[calc(100vh-4rem)] flex-col gap-3 pb-8 xl:fixed xl:flex xl:pb-0">
+      {children}
+    </aside>
+  );
+};
+
+export default Aside;
