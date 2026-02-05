@@ -1,0 +1,33 @@
+.shiki {
+  font-size: 0.8125rem;
+  background-color: var(--shiki-light-bg);
+  padding-block: 1.25rem;
+}
+.shiki .line {
+  padding-inline: 1.25rem;
+  height: 20px;
+}
+.shiki code {
+  display: grid;
+}
+.shiki span {
+  color: var(--shiki-light);
+}
+html.dark .shiki {
+  background-color: var(--shiki-dark-bg);
+}
+html.dark .shiki span {
+  color: var(--shiki-dark);
+}
+
+.shiki .highlighted {
+  @apply relative bg-blue-50 after:absolute after:top-0 after:bottom-0 after:left-0 after:w-[2px] after:bg-blue-600 dark:bg-blue-950 after:dark:bg-blue-400;
+}
+
+.shiki .remove {
+  @apply relative bg-red-50 after:absolute after:top-0 after:bottom-0 after:left-0 after:w-[2px] after:bg-red-600 dark:bg-red-950 after:dark:bg-red-400;
+}
+
+.shiki .add {
+  @apply relative bg-green-50 after:absolute after:top-0 after:bottom-0 after:left-0 after:w-[2px] after:bg-green-600 dark:bg-green-950 after:dark:bg-green-400;
+}

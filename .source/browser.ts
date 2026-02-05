@@ -7,6 +7,6 @@ const create = browser<typeof Config, import("fumadocs-mdx/runtime/types").Inter
   }
 }>();
 const browserCollections = {
-  posts: create.doc("posts", {"test.mdx": () => import("../src/content/writing/test.mdx?collection=posts"), }),
+  posts: create.doc("posts", {"terminal-setup-2025.mdx": () => import("../src/content/writing/terminal-setup-2025.mdx?collection=posts"), "test.mdx": () => import("../src/content/writing/test.mdx?collection=posts"), }),
 };
 export default browserCollections;
