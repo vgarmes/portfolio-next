@@ -1,0 +1,257 @@
+---
+title: "Sparkling Text"
+date: 2025-10-01
+description: "Adding sparkles to emphasize positive text"
+tags: ["react", "animation"]
+draft: false
+---
+
+import { SparklingText } from "@/components/demos/sparkling-text.tsx";
+import { Demo } from "@/components/demo.tsx";
+
+Recently, I stumbled upon [Linear's stunning Readme page](https://linear.app/readme).
+If you haven't checked it out yet, I'd recommend you to do so.
+It's not just a "readme", it's a nostalgic journey through the early magical days of the internet.
+A reflection on how things changed and Linear's mission to revive that sense of wonder.
+
+One detail that really caught my eye on this page was their use of
+delightful text effects. Among them, this highlighted text that sparkles when you hover:
+
+<Demo>
+  <div class="flex h-25 items-center justify-center">
+    <SparklingText client:load>A magical moment.</SparklingText>
+  </div>
+</Demo>
+
+It instantly reminded me of [this Sparkles component](https://www.joshwcomeau.com/react/animated-sparkles-in-react/)
+that Josh Comeau put together some time ago.
+
+Linear's version adds a couple of touches, and in this post I’m going to explore how Linear’s component was built.
+
+I’ll use CSS modules, but this approach can easily be adapted to any styling solution.
+
+## Text with moving background
+
+We can achieve the moving background color gradient effect by combining a linear gradient background with an animation of its position:
+
+```css title=sparkling-text.module.css
+.sparkle__text {
+  --a: #db91cb;
+  --b: #9a5eff;
+  overflow: visible;
+  cursor: default;
+  position: relative;
+  font-weight: 500;
+  background: linear-gradient(
+    120deg,
+    var(--a) 0%,
+    var(--b) 50%,
+    var(--a) 100%
+  ); /* [!code highlight] */
+  background-size: 200% auto; /* [!code highlight] */
+  animation: 3s linear infinite forwards backgroundShift; /* [!code highlight] */
+  background-clip: text; /* [!code highlight] */
+  -webkit-text-fill-color: transparent; /* [!code highlight] */
+  color: unset;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+@keyframes backgroundShift {
+  100% {
+    background-position: -200% center;
+  }
+}
+```
+
+By using `background-clip: text` and `-webkit-text-fill-color: transparent` to make the text transparent,
+we ensure that the gradient is visible only within the text itself, rather than behind it.
+
+Finally, we set the `background-size: 200% auto`, which ensures the gradient is wide enough for a smooth transition.
+By animating background-position to -200%, the text appears to shift gradually from one color to another.
+
+## Animating the sparkle
+
+Each of the sparkles consist of an `svg`, which I directly used Linear's:
+
+<div className="mb-6 flex items-center justify-center">
+  <svg width="20" height="20" viewBox="0 0 68 68" fill="#8253D5">
+    <path d="M26.5 25.5C19.0043 33.3697 0 34 0 34C0 34 19.1013 35.3684 26.5 43.5C33.234 50.901 34 68 34 68C34 68 36.9884 50.7065 44.5 43.5C51.6431 36.647 68 34 68 34C68 34 51.6947 32.0939 44.5 25.5C36.5605 18.2235 34 0 34 0C34 0 33.6591 17.9837 26.5 25.5Z"></path>
+  </svg>
+</div>
+
+Each sparkle uses a combination of scaling and rotating keyframe animations to twinkle.
+
+To achieve that, we'll create a wrapper around the svg so we can keep the two animations separate and have more control over the duration and timing functions:
+
+```html
+<span class="sparkle__sparkle">
+  <svg width="20" height="20" viewBox="0 0 68 68" fill="#8253D5">
+    <path
+      d="M26.5 25.5C19.0043 33.3697 0 34 0 34C0 34 19.1013 35.3684 26.5 43.5C33.234 50.901 34 68 34 68C34 68 36.9884 50.7065 44.5 43.5C51.6431 36.647 68 34 68 34C68 34 51.6947 32.0939 44.5 25.5C36.5605 18.2235 34 0 34 0C34 0 33.6591 17.9837 26.5 25.5Z"
+    ></path>
+  </svg>
+</span>
+```
+
+Then add the scaling animation to the wrapper and the spinning animation to the svg:
+
+```css title=sparkling-text.module.css
+.sparkle__sparkle {
+  /* rest of styles */
+  animation: 700ms ease 0s 1 normal forwards comeInOut;
+}
+
+.sparkle__sparkle svg {
+  /* rest of styles */
+  animation: 1000ms linear 0s 1 normal none spin;
+}
+
+@keyframes comeInOut {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(180deg);
+  }
+}
+```
+
+## Generating sparkles
+
+Now that we have the sparkle element and its animation, we need to generate them sequentally.
+Each sparkle will have a `createdAt` timestamp that we will use as its ID, and a random position:
+
+```ts title=helpers.ts
+function randomInRange(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+type Sparkle = { style: CSSProperties; createdAt: number };
+
+function generateSparkle(): Sparkle {
+  const left = randomInRange(-20, 120) + "%";
+  const top = randomInRange(-20, 120) + "%";
+
+  return { style: { left, top }, createdAt: Date.now() };
+}
+```
+
+The position is randomized between -20% and 120% of the container element's width and height so the sparkles can also render slightly outside this element.
+
+## Generation and cleanup
+
+The component uses two state variables: one to track whether it's actively animating, and another to maintain an array of sparkle positions.
+Sparkles are generated using `setInterval`. On each interval, we create a new sparkle and add it to the beginning of the array.
+
+To prevent polluting the DOM with stale sparkle elements, we slice the array to keep only the 3 most recent sparkles—when a fourth sparkle is added, the oldest one (at the end of the array) is automatically removed.
+The timing is carefully calibrated: sparkles generate every 250ms by default, while each sparkle's scaling animation lasts 700ms. This gives sparkles enough time to complete their animation before being cleaned up.
+
+```tsx title=sparkling-text.tsx
+const SparklingText: FunctionalComponent<Props> = ({ children }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [sparkles, setSparkles] = useState<Sparkle[]>([]);
+
+  useEffect(() => {
+    if (!isAnimating) return;
+
+    const interval = setInterval(() => {
+      setSparkles((prev) => [generateSparkle(), ...prev].slice(0, 3));
+    }, 250);
+
+    return () => clearInterval(interval);
+  }, [isAnimating]);
+
+  return (
+    <div class={styles.sparkle__container}>
+      {sparkles.map((sparkle) => (
+        <span
+          key={sparkle.createdAt}
+          class={styles.sparkle__sparkle}
+          style={sparkle.style}
+        >
+          <svg width="20" height="20" viewBox="0 0 68 68" fill="#8253D5">
+            <path d="M26.5 25.5C19.0043 33.3697 0 34 0 34C0 34 19.1013 35.3684 26.5 43.5C33.234 50.901 34 68 34 68C34 68 36.9884 50.7065 44.5 43.5C51.6431 36.647 68 34 68 34C68 34 51.6947 32.0939 44.5 25.5C36.5605 18.2235 34 0 34 0C34 0 33.6591 17.9837 26.5 25.5Z"></path>
+          </svg>
+        </span>
+      ))}
+
+      <span class={styles.sparkle__text}>{children}</span>
+    </div>
+  );
+};
+```
+
+Another important detail is that we use each sparkle's `createdAt` timestamp as its React key.
+This ensures React treats each sparkle as a new element, properly triggering the CSS animation on mount.
+
+## Pulling it all together
+
+Finally, to make the sparkles appear on hover, we add pointer event listeners to the container. On devices that don’t support hover, like mobile, we simply let the animation run continuously instead.
+
+```tsx title=sparking-text.tsx
+const SparklingText: FunctionalComponent<Props> = ({ children }) => {
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [sparkles, setSparkles] = useState<Sparkle[]>([]);
+
+  useEffect(() => {
+    // [!code ++]
+    const isHoverUnsupported = window.matchMedia("(hover: none)").matches; // [!code ++]
+
+    if (isHoverUnsupported) {
+      // [!code ++]
+      setIsAnimating(true); // [!code ++]
+    } // [!code ++]
+  }, []); // [!code ++]
+
+  useEffect(() => {
+    if (!isAnimating) return;
+
+    const interval = setInterval(() => {
+      setSparkles((prev) => [generateSparkle(), ...prev].slice(0, 3));
+    }, 250);
+
+    return () => clearInterval(interval);
+  }, [isAnimating]);
+
+  return (
+    <span
+      class={styles.sparkle__container}
+      onPointerEnter={() => setIsAnimating(true)} // [!code ++]
+      onPointerLeave={() => setIsAnimating(false)} // [!code ++]
+    >
+      {sparkles.map((sparkle) => (
+        <span
+          key={sparkle.createdAt}
+          class={styles.sparkle__sparkle}
+          style={sparkle.style}
+        >
+          <svg width="20" height="20" viewBox="0 0 68 68" fill="#8253D5">
+            <path d="M26.5 25.5C19.0043 33.3697 0 34 0 34C0 34 19.1013 35.3684 26.5 43.5C33.234 50.901 34 68 34 68C34 68 36.9884 50.7065 44.5 43.5C51.6431 36.647 68 34 68 34C68 34 51.6947 32.0939 44.5 25.5C36.5605 18.2235 34 0 34 0C34 0 33.6591 17.9837 26.5 25.5Z"></path>
+          </svg>
+        </span>
+      ))}
+
+      <span class={styles.sparkle__text}>{children}</span>
+    </span>
+  );
+};
+```
+
+You can see the complete implementation details in the [source code](http://github.com/vgarmes/vgarmes.github.io/blob/main/src/components/demos/sparkling-text.tsx)
+and if you found this useful please drop a like!
+
+Thanks for reading.

@@ -18,7 +18,13 @@ export const posts = defineCollections({
   dir: "src/content/writing",
   schema: frontmatterSchema.extend({
     title: z.string(),
-    date: z.iso.date(),
+    date: z.date(),
+    image: z
+      .object({
+        src: z.string(),
+        alt: z.string(),
+      })
+      .optional(),
   }),
 });
 

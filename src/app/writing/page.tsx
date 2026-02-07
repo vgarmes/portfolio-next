@@ -28,7 +28,7 @@ const Writing: React.FC = () => {
             key={post.url}
             tabIndex={0}
             className="flex items-center justify-between gap-4 py-3 transition-opacity hover:opacity-100 hover:transition-none focus:!opacity-100 focus:transition-none"
-            href={`/writing/${post.url}`}
+            href={post.url}
           >
             <p className="truncate">{post.data.title}</p>
 

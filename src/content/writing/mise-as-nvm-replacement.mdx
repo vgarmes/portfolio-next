@@ -1,0 +1,76 @@
+---
+title: "Switching from nvm to mise-en-place"
+date: 2025-09-29
+description: "A simple alternative for Node.js version management."
+tags: ["node", "javascript", "mise"]
+draft: false
+---
+
+As a frontend engineer working primarily in the JavaScript ecosystem, I've relied on [nvm](https://github.com/nvm-sh/nvm) for years. It lets you run multiple versions of Node.js on your machine, which is essential when switching between projects with different Node requirements.
+
+Recently, I discovered a new tool at work that I believe will replace nvm for me: [mise-en-place](https://mise.jdx.dev/) (or just "mise"). They describe themselves as the "front-end to your dev env" 🙌.
+
+While nvm is Node-specific, mise is a universal version manager. With mise, you can manage not only Node.js, but also Bun, Deno, Go, Python, Rust, and more. Version preferences are simply managed using a `mise.toml` file in each project, or a global `config.toml` file.
+
+If you want a simpler, more flexible way to manage Node.js versions and other runtimes, mise is a great option. It has quickly become an essential tool in my workflow. Here’s how you can get started:
+
+## Seting up mise
+
+If you're on macOS, installation is simple with Homebrew:
+
+```shell
+brew install mise
+```
+
+If you use a Zsh terminal shell, initialize mise in your `.zshrc`:
+
+```shell
+echo 'eval "$(mise activate zsh)"' >> ~/.zshrc
+```
+
+Restart your terminal or run `source ~/.zshrc` to activate.
+
+## Using mise as nvm replacement
+
+At the time of writing, the latest version of Node is v24. To install it and make it the global default we can just run:
+
+```shell
+mise use -g node@24
+```
+
+This creates a `config.toml` in `~/.config/mise`:
+
+```toml title=.config/mise
+[tools]
+node = "24"
+```
+
+Alternatively, you can just install the latest LTS version by doing `mise use -g node@lts`. However, this will cause mise to warn you every time there is a new LTS version. For me, it's just fine to stick to a version until I decide to manually upgrade.
+
+You may want to uninstall any previous version of Node.js you have, either from nvm or as a global package. After setup, running `which node` will show something like:
+
+```shell
+~/.local/share/mise/installs/node/22.20.0/bin/node
+```
+
+If a project requires a different version, for example Node 20, just add a `mise.toml` file in your project root:
+
+```toml title=mise.toml
+[tools]
+node = "20"
+```
+
+Then mise will automatically switch versions for you as soon as you enter the project directory.
+
+Moreover, if you already had a `.nvmrc` or `.node-version`, you don't even need to create this `mise.toml` file if you don't want to. Mise also supports these files out of the box, making it a true drop-in replacement for nvm.
+
+## Listing and uninstalling Node versions
+
+Finally, by running `mise ls`, we can see a list of all the installed Node versions. We will see something like this:
+
+```shell
+Tool  Version  Source                      Requested
+node  24.10.0  ~/.config/mise/config.toml  24
+```
+
+This means that we currently have v24.10.0 installed, and the current context, which is the global `config.toml` file, requires 24. If we were inside the directory of a project that requires another version, we would see a different `Requested` version.

@@ -13,7 +13,7 @@ const Writing: React.FC = () => {
         {posts.slice(0, 5).map((post) => (
           <li key={post.url}>
             <Link
-              href={`/writing/${post.url}`}
+              href={post.url}
               className="hover:bg-muted hover:text-foreground dark:hover:bg-input/30 -mx-3 flex gap-1 rounded-md px-3 sm:py-3 md:grid md:grid-cols-[1fr_140px] md:gap-4"
             >
               <div className="flex flex-col">
