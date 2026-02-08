@@ -11,28 +11,27 @@ import {
 } from "react";
 
 export const ScratchCard: React.FC = () => {
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [lastPos, setLastPos] = useState({ x: 0, y: 0 });
+  const isDrawing = useRef(false);
+  const lastPos = useRef({ x: 0, y: 0 });
   const [showCopyButton, setShowCopyButton] = useState(false);
 
   const hiddenContent = useRef<HTMLDivElement>(null);
-  const copyButton = useRef<HTMLButtonElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Paint the scratch surface and reveal hidden content
   useEffect(() => {
     const canvas = canvasRef.current;
-
     if (!canvas) return;
+
     canvas.width = canvas.offsetWidth;
     canvas.height = canvas.offsetHeight;
-    canvas.style.cursor = `url("/coin_cursor.png") 16 16, auto`;
+    // TODO: Add cursor icon
+    // canvas.style.cursor = `url("/coin_cursor.png") 16 16, auto`;
 
     const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Canvas element not found");
 
-    if (!ctx) {
-      throw new Error("Canvas element not found");
-    }
-    // 1. Draw metallic gradient
+    // Draw metallic gradient
     const gradient = ctx.createLinearGradient(
       0,
       0,
@@ -43,114 +42,121 @@ export const ScratchCard: React.FC = () => {
     gradient.addColorStop(1, "#a6a6a6");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Add metallic noise (procedural, no external image)
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    for (let i = 0; i < data.length; i += 4) {
+      const rand = (Math.random() - 0.5) * 50;
+      data[i] += rand;
+      data[i + 1] += rand;
+      data[i + 2] += rand;
+    }
+    ctx.putImageData(imageData, 0, 0);
+
+    // Configure scratch stroke
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
     ctx.globalCompositeOperation = "destination-out";
     ctx.lineWidth = 20;
 
-    // 2. Add metallic noise (procedural, no external image)
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-    for (let i = 0; i < data.length; i += 4) {
-      const rand = (Math.random() - 0.5) * 50; // noise intensity
-      data[i] += rand; // R
-      data[i + 1] += rand; // G
-      data[i + 2] += rand; // B
-    }
-    ctx.putImageData(imageData, 0, 0);
-
-    // hidden content starts with opacity 0 to avoid flashing it before canvas is painted
+    // Hidden content starts with opacity 0 to avoid flashing before canvas is painted
     hiddenContent.current?.style.setProperty("opacity", "1");
+  }, []);
+
+  // Register touch/mouse event listeners
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    function getErasedPercentage() {
+      const ctx = canvas!.getContext("2d");
+      if (!ctx) return 0;
+
+      // Sample the central row of the canvas
+      const imageData = ctx.getImageData(
+        0,
+        canvas!.height / 2,
+        canvas!.width,
+        1,
+      );
+      const data = imageData.data;
+
+      let erasedPixels = 0;
+      for (let i = 3; i < data.length; i += 4) {
+        if (data[i] === 0) erasedPixels++;
+      }
+
+      return (erasedPixels / canvas!.width) * 100;
+    }
 
     function stopDrawing() {
-      setIsDrawing(false);
-
-      const erasedPercentage = getErasedPercentage();
-
-      if (erasedPercentage > 90 && copyButton) {
+      isDrawing.current = false;
+      if (getErasedPercentage() > 90) {
         setShowCopyButton(true);
       }
     }
 
-    function getErasedPercentage() {
-      const canvas = canvasRef.current;
-      const ctx = canvasRef.current?.getContext("2d");
+    function handleTouchMove(e: globalThis.TouchEvent) {
+      e.preventDefault();
+      const ctx = canvas!.getContext("2d");
+      if (!isDrawing.current || !ctx) return;
 
-      if (!canvas || !ctx) return 0;
+      const rect = canvas!.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      const y = e.touches[0].clientY - rect.top;
 
-      // just get the central line of the canvas
-      const imageData = ctx.getImageData(0, canvas.height / 2, canvas.width, 1);
-      const data = imageData.data;
+      ctx.beginPath();
+      ctx.moveTo(lastPos.current.x, lastPos.current.y);
+      ctx.lineTo(x, y);
+      ctx.stroke();
 
-      let erasedPixels = 0;
-
-      // Each pixel has 4 values (R, G, B, A)
-      for (let i = 3; i < data.length; i += 4) {
-        if (data[i] === 0) erasedPixels++; // alpha = 0 means erased
-      }
-
-      const totalPixels = canvas.width; // width * 1px
-
-      return (erasedPixels / totalPixels) * 100; // percentage
+      lastPos.current = { x, y };
     }
 
+    canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
     document.addEventListener("mouseup", stopDrawing);
     document.addEventListener("touchend", stopDrawing);
+
+    return () => {
+      canvas.removeEventListener("touchmove", handleTouchMove);
+      document.removeEventListener("mouseup", stopDrawing);
+      document.removeEventListener("touchend", stopDrawing);
+    };
   }, []);
 
-  function startDrawing(e: MouseEvent<HTMLCanvasElement>) {
-    if (!canvasRef.current) return;
-
-    setIsDrawing(true);
-    const { offsetX, offsetY } = e.nativeEvent;
-
-    // store initial coordinates
-    setLastPos({ x: offsetX, y: offsetY });
+  function getPos(
+    e: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>,
+  ) {
+    if ("touches" in e) {
+      const rect = canvasRef.current!.getBoundingClientRect();
+      const touch = e.touches[0];
+      return { x: touch.clientX - rect.left, y: touch.clientY - rect.top };
+    }
+    return { x: e.nativeEvent.offsetX, y: e.nativeEvent.offsetY };
   }
 
-  const startTouchDrawing = (e: TouchEvent<HTMLCanvasElement>) => {
+  function startDrawing(
+    e: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>,
+  ) {
     if (!canvasRef.current) return;
+    isDrawing.current = true;
+    lastPos.current = getPos(e);
+  }
 
-    setIsDrawing(true);
-    const rect = canvasRef.current.getBoundingClientRect();
-    const touch = e.touches[0];
-    setLastPos({ x: touch.clientX - rect.left, y: touch.clientY - rect.top });
-  };
-
-  function scratch(e: MouseEvent<HTMLCanvasElement>) {
+  function scratch(
+    e: MouseEvent<HTMLCanvasElement> | TouchEvent<HTMLCanvasElement>,
+  ) {
     const ctx = canvasRef.current?.getContext("2d");
-    if (!isDrawing || !ctx) return;
+    if (!isDrawing.current || !ctx) return;
 
-    const x = e.nativeEvent.offsetX;
-    const y = e.nativeEvent.offsetY;
-
+    const { x, y } = getPos(e);
     ctx.beginPath();
-    ctx.moveTo(lastPos.x, lastPos.y);
+    ctx.moveTo(lastPos.current.x, lastPos.current.y);
     ctx.lineTo(x, y);
-
     ctx.stroke();
 
-    setLastPos({ x, y });
-  }
-
-  function scratchTouch(e: TouchEvent<HTMLCanvasElement>) {
-    e.preventDefault(); // Prevent scrolling
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext("2d");
-
-    if (!isDrawing || !ctx || !canvas) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const x = e.touches[0].clientX - rect.left;
-    const y = e.touches[0].clientY - rect.top;
-
-    ctx.beginPath();
-    ctx.moveTo(lastPos.x, lastPos.y);
-    ctx.lineTo(x, y);
-
-    ctx.stroke();
-
-    setLastPos({ x, y });
+    lastPos.current = { x, y };
   }
   return (
     <Demo>
@@ -177,29 +183,30 @@ export const ScratchCard: React.FC = () => {
                 height="200"
                 className="absolute h-full w-full"
                 onMouseDown={startDrawing}
-                onTouchStart={startTouchDrawing}
-                onTouchMove={scratchTouch}
+                onTouchStart={startDrawing}
                 onMouseMove={scratch}
                 onMouseEnter={(e) => {
-                  if (isDrawing) {
+                  if (isDrawing.current) {
                     // restart coordinates if mouse left and re-entered while drawing
                     const { offsetX, offsetY } = e.nativeEvent;
-                    // guardar las coordenadas iniciales
-                    setLastPos({ x: offsetX, y: offsetY });
+                    lastPos.current = { x: offsetX, y: offsetY };
                   }
                 }}
               ></canvas>
             </div>
             <button
               id="copy-button"
-              ref={copyButton}
               className={clsx(
-                "transform-all flex size-4 cursor-pointer items-center justify-center opacity-0",
+                "flex size-4 cursor-pointer items-center justify-center opacity-0 transition-all",
                 {
                   "opacity-100": showCopyButton,
                 },
               )}
               title="Copy code"
+              onClick={() => {
+                const text = hiddenContent.current?.textContent;
+                if (text) navigator.clipboard.writeText(text.trim());
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

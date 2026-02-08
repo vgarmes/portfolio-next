@@ -1,6 +1,7 @@
 "use client";
 
 import { CSSProperties, useEffect, useRef, useState } from "react";
+import { Demo } from "../demo";
 
 const TABS = [
   "Overview",
@@ -18,7 +19,7 @@ function getTabUnderlineStyle(item: HTMLLIElement) {
   };
 }
 
-const AnimatedTabs: React.FC = () => {
+export const AnimatedTabs: React.FC = () => {
   const [isFirstHover, setIsFirstHover] = useState(true);
   const itemsRef = useRef<Map<number, HTMLLIElement | null>>(null);
 
@@ -47,7 +48,7 @@ const AnimatedTabs: React.FC = () => {
   }, []);
 
   return (
-    <div className="not-prose flex min-h-40 items-center justify-center p-2">
+    <Demo>
       <nav
         id="animated-tabs"
         className="text-muted-foreground scrollbar-none shadow-border relative overflow-x-auto shadow-[inset_0_-1px]"
@@ -99,7 +100,7 @@ const AnimatedTabs: React.FC = () => {
         <div
           id="menu-backdrop"
           style={backdropStyle}
-          className="absolute top-0 left-0 -z-10 h-(--height) w-(--width) translate-x-(--left) translate-y-(--top) rounded bg-gray-300 opacity-0 transition-[opacity,_translate,_width,_height] duration-[250ms,_var(--transition-duration,_0ms),_var(--transition-duration,_0ms),_var(--transition-duration,_0ms)] ease-in-out"
+          className="bg-muted absolute top-0 left-0 -z-10 h-(--height) w-(--width) translate-x-(--left) translate-y-(--top) rounded opacity-0 transition-[opacity,translate,width,height] duration-[250ms,var(--transition-duration,0ms),var(--transition-duration,0ms),var(--transition-duration,0ms)] ease-in-out"
         ></div>
         <div
           id="tab-underline"
@@ -107,8 +108,6 @@ const AnimatedTabs: React.FC = () => {
           style={tabUnderlineStyle}
         ></div>
       </nav>
-    </div>
+    </Demo>
   );
 };
-
-export default AnimatedTabs;
