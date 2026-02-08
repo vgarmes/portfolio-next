@@ -1,3 +1,4 @@
+import { Connect } from "@/components/connect";
 import { Hero } from "@/components/hero";
 import { Now } from "@/components/now";
 import { Writing } from "@/components/writing";
@@ -8,6 +9,7 @@ export default function Home() {
       <Hero />
       <Writing />
       <Now />
+      <Connect />
     </div>
   );
 }

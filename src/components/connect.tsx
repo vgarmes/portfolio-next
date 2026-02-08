@@ -1,0 +1,23 @@
+import { Link } from "./link";
+
+export const Connect: React.FC = () => {
+  return (
+    <section className="mt-16 sm:mt-32">
+      <h3 className="mb-5 font-medium sm:mb-6">Connect</h3>
+
+      <p>
+        Reach me on{" "}
+        <Link href="mailto:vgmestre@gmail.com">vgmestre@gmail.com</Link>, see my
+        open-source projects on{" "}
+        <Link isExternal={true} href="https://github.com/vgarmes">
+          Github
+        </Link>{" "}
+        or follow me{" "}
+        <Link isExternal={true} href="https://x.com/vgmestre">
+          @vgmestre
+        </Link>
+        .
+      </p>
+    </section>
+  );
+};

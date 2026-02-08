@@ -1,4 +1,4 @@
-import ThemeSwitcher from "./theme-switcher";
+import { ThemeSwitcher } from "./theme-switcher";
 
 const Footer: React.FC = () => {
   return (
