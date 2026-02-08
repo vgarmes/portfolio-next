@@ -7,17 +7,18 @@ interface Props {
   slug: string;
 }
 
-const apiHost = process.env.NEXT_PUBLIC_API_HOST;
-
 export const PostStats = ({ slug }: Props) => {
   const [likes, setLikes] = useState(0);
   const [userLikes, setUserLikes] = useState(0);
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading",
   );
+
   useEffect(() => {
     const fetchStats = async () => {
-      const response = await fetch(`${apiHost}/api/posts/${slug}/stats`);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_HOST}/api/posts/${slug}/stats`,
+      );
       if (response.status !== 200) {
         setStatus("error");
         return;
@@ -33,7 +34,9 @@ export const PostStats = ({ slug }: Props) => {
     };
 
     const incrementViews = () =>
-      fetch(`${apiHost}/api/posts/${slug}/view`, { method: "POST" });
+      fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/posts/${slug}/view`, {
+        method: "POST",
+      });
 
     fetchStats().then(() => incrementViews());
   }, [slug]);

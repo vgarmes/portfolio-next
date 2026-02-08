@@ -9,8 +9,6 @@ interface Props {
   onLike: () => void;
 }
 
-const apiHost = process.env.NEXT_PUBLIC_API_HOST;
-
 export const PostLikes: React.FC<Props> = ({
   slug,
   likes = 0,
@@ -35,7 +33,7 @@ export const PostLikes: React.FC<Props> = ({
       return;
     }
     function likePost() {
-      fetch(`${apiHost}/api/posts/${slug}/like`, {
+      fetch(`${process.env.NEXT_PUBLIC_API_HOST}/api/posts/${slug}/like`, {
         method: "POST",
         body: JSON.stringify({ count: incrementLikes.current }),
       });
