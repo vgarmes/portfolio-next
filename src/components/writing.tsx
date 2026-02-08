@@ -3,7 +3,7 @@ import { formatDate } from "@/lib/date";
 import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-const Writing: React.FC = () => {
+export const Writing: React.FC = () => {
   const posts = getPosts();
 
   return (
@@ -46,5 +46,3 @@ const Writing: React.FC = () => {
     </section>
   );
 };
-
-export default Writing;
