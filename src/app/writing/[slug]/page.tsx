@@ -1,20 +1,20 @@
-import { source } from "@/lib/source";
 import { notFound } from "next/navigation";
 import { mdxComponents } from "@/mdx-components";
 import ArticleHeader from "@/components/article-header";
 import { Metadata } from "next";
-import { getPost } from "@/lib/data";
+import { getPost, getPosts } from "@/lib/data";
 import Link from "next/link";
 import { Undo2 } from "lucide-react";
-
 import { TableOfContents } from "@/components/table-of-contents";
+import { PostStats } from "@/components/post-stats";
+import { BackTopButton } from "@/components/back-top-button";
 
-export function generateStaticParams() {
-  return source.generateParams();
+export function generateStaticParams(): { slug: string }[] {
+  return getPosts().map((post) => ({ slug: post.slugs[0] })); // because source.generateParams() can only be used with an optional catch-all route
 }
 
 type Props = {
-  params: Promise<{ slug: string[] }>;
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -54,6 +54,10 @@ export default async function Page({ params }: Props) {
       <ArticleHeader title={page.data.title} date={page.data.date} />
       <div className="mt-12 flex-1 pb-6">
         <Mdx components={mdxComponents} />
+      </div>
+      <div className="flex items-center justify-between pt-4">
+        <PostStats slug={slug} />
+        <BackTopButton />
       </div>
     </article>
   );

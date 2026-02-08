@@ -1,8 +1,8 @@
 import { cache } from "react";
 import { source } from "./source";
 
-export const getPost = cache((slug: string[] | undefined) => {
-  const res = source.getPage(slug);
+export const getPost = cache((slug: string) => {
+  const res = source.getPage([slug]);
   return res;
 });
 

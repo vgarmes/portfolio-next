@@ -28,7 +28,7 @@ const Confetti: React.FC<ConfettiProps> = ({ active }) => (
     <g
       className={styles.confettiGroup}
       fill="none"
-      fill-rule="evenodd"
+      fillRule="evenodd"
       transform="translate(467 392)"
     >
       <g
