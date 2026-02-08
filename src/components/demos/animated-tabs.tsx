@@ -19,6 +19,8 @@ function getTabUnderlineStyle(item: HTMLLIElement) {
   };
 }
 
+type BackdropStyle = CSSProperties | Record<string, string>;
+
 export const AnimatedTabs: React.FC = () => {
   const [isFirstHover, setIsFirstHover] = useState(true);
   const itemsRef = useRef<Map<number, HTMLLIElement | null>>(null);
@@ -26,7 +28,7 @@ export const AnimatedTabs: React.FC = () => {
   const [tabUnderlineStyle, setTabUnderlineStyle] = useState<
     CSSProperties | undefined
   >(undefined);
-  const [backdropStyle, setBackdropStyle] = useState<CSSProperties | undefined>(
+  const [backdropStyle, setBackdropStyle] = useState<BackdropStyle | undefined>(
     undefined,
   );
 
@@ -44,6 +46,7 @@ export const AnimatedTabs: React.FC = () => {
     if (!firstItem) return;
 
     // initial tab underline position
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTabUnderlineStyle(getTabUnderlineStyle(firstItem));
   }, []);
 

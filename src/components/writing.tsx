@@ -24,7 +24,7 @@ const Writing: React.FC = () => {
               </div>
               <time
                 className="text-muted-foreground hidden text-right text-sm leading-6 md:block"
-                dateTime={post.data.date}
+                dateTime={post.data.date.toISOString()}
               >
                 {formatDate(post.data.date)}
               </time>

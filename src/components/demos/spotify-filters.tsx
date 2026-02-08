@@ -79,7 +79,9 @@ const SpotifyFilters: React.FC = () => {
           onClick={() => {
             handleFilterChange(filter);
           }}
-          ref={(el) => (filterRefs.current[index] = el)}
+          ref={(el) => {
+            filterRefs.current[index] = el;
+          }}
         >
           {filter.charAt(0).toUpperCase() + filter.slice(1)}
         </button>

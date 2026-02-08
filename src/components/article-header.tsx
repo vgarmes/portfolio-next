@@ -1,11 +1,11 @@
 import { formatDate } from "@/lib/date";
 
-const ArticleHeader: React.FC<{ title: string; date: string }> = ({
+const ArticleHeader: React.FC<{ title: string; date: Date }> = ({
   title,
   date,
 }) => {
   const formattedDate = formatDate(date);
-  const isoDate = new Date(date).toISOString();
+
   return (
     <header>
       <h1 id="overview" className="scroll-mt-16 font-medium">
@@ -13,7 +13,7 @@ const ArticleHeader: React.FC<{ title: string; date: string }> = ({
       </h1>
       <time
         className="text-muted-foreground flex flex-wrap items-center gap-6 gap-y-4"
-        dateTime={isoDate}
+        dateTime={date.toISOString()}
       >
         {formattedDate}
       </time>

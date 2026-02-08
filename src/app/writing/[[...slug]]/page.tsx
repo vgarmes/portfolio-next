@@ -2,7 +2,7 @@ import { source } from "@/lib/source";
 import { notFound } from "next/navigation";
 import { mdxComponents } from "@/mdx-components";
 import ArticleHeader from "@/components/article-header";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { getPost } from "@/lib/data";
 import Link from "next/link";
 import { Undo2 } from "lucide-react";
@@ -17,10 +17,7 @@ type Props = {
   params: Promise<{ slug: string[] }>;
 };
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const slug = (await params).slug;
 
   // fetch post information
