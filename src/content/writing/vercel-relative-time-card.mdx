@@ -9,7 +9,7 @@ tags: ["react", "vercel", "datetime"]
 draft: false
 ---
 
-import RelativeTimeCardDemo from "../../components/demos/relative-time-card";
+import { RelativeTimeCard } from "@/components/demos/relative-time-card";
 
 Handling dates and time zones is a common UI/UX challenge in web applications. Depending on the use case, we might display times in UTC or the user’s local time zone, but it’s often unclear which one they’re looking at.
 
@@ -28,7 +28,7 @@ First, let’s set up the basic structure of the component using dummy date valu
 ```tsx
 const RelativeTimeCard: React.FC = () => {
   return (
-    <div className="bg-background border-border w-[325px] rounded-md border p-3 shadow-md">
+    <div className="bg-background border-border w-81.25 rounded-md border p-3 shadow-md">
       <div className="flex flex-col gap-3">
         <span className="text-muted-foreground text-xs tabular-nums">
           3 hours, 24 minutes, 35 seconds
@@ -74,7 +74,7 @@ This is what it looks like:
 {
 
 <div className="flex justify-center my-6">
-  <div className="bg-background border-border w-[325px] rounded-md border p-3 shadow-md">
+  <div className="bg-background border-border w-81.25 rounded-md border p-3 shadow-md">
     <div className="flex flex-col gap-3">
       <span className="text-muted-foreground text-xs tabular-nums">
         3 hours, 24 minutes, 35 seconds
@@ -299,7 +299,7 @@ Now, all that’s left is to integrate the previous component with the rest of t
 const RelativeTimeCard: FunctionalComponent<Props> = ({ date }) => {
   const timeDistance = useTimeDistance(date);
   return (
-    <div className="bg-background border-border w-[325px] rounded-md border p-3 shadow-md">
+    <div className="bg-background border-border w-81.25 rounded-md border p-3 shadow-md">
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-3">
           <span className="text-muted-foreground text-xs tabular-nums">
@@ -321,7 +321,7 @@ const RelativeTimeCard: FunctionalComponent<Props> = ({ date }) => {
 
 And here's the result ✨:
 
-<RelativeTimeCardDemo client:load />
+<RelativeTimeCard />
 
 To render this on hover, we can just leverage [Radix's Tooltip](https://www.radix-ui.com/primitives/docs/components/tooltip).
 

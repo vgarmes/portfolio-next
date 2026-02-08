@@ -111,10 +111,12 @@ const DateTimeZone: React.FC<{ date: Date; zone: string }> = ({
   );
 };
 
-const RelativeTimeCard: React.FC<Props> = ({ date }) => {
+const date = new Date();
+
+export const RelativeTimeCard: React.FC<Props> = () => {
   const timeDistance = useTimeDistance(date);
   return (
-    <div className="bg-background border-border w-[325px] rounded-md border p-3 shadow-md">
+    <div className="bg-background border-border w-81.25 rounded-md border p-3 shadow-md">
       <div className="flex flex-col gap-3">
         <span className="text-muted-foreground text-xs tabular-nums">
           {timeDistance}
@@ -130,5 +132,3 @@ const RelativeTimeCard: React.FC<Props> = ({ date }) => {
     </div>
   );
 };
-
-export default RelativeTimeCard;
