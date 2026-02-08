@@ -34,7 +34,7 @@ I’ll use CSS modules, but this approach can easily be adapted to any styling s
 
 We can achieve the moving background color gradient effect by combining a linear gradient background with an animation of its position:
 
-```css title=sparkling-text.module.css
+```css title="sparkling-text.module.css"
 .sparkle__text {
   --a: #db91cb;
   --b: #9a5eff;
@@ -96,7 +96,7 @@ To achieve that, we'll create a wrapper around the svg so we can keep the two an
 
 Then add the scaling animation to the wrapper and the spinning animation to the svg:
 
-```css title=sparkling-text.module.css
+```css title="sparkling-text.module.css"
 .sparkle__sparkle {
   /* rest of styles */
   animation: 700ms ease 0s 1 normal forwards comeInOut;
@@ -135,7 +135,7 @@ Then add the scaling animation to the wrapper and the spinning animation to the 
 Now that we have the sparkle element and its animation, we need to generate them sequentally.
 Each sparkle will have a `createdAt` timestamp that we will use as its ID, and a random position:
 
-```ts title=helpers.ts
+```ts title="helpers.ts"
 function randomInRange(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -160,7 +160,7 @@ Sparkles are generated using `setInterval`. On each interval, we create a new sp
 To prevent polluting the DOM with stale sparkle elements, we slice the array to keep only the 3 most recent sparkles—when a fourth sparkle is added, the oldest one (at the end of the array) is automatically removed.
 The timing is carefully calibrated: sparkles generate every 250ms by default, while each sparkle's scaling animation lasts 700ms. This gives sparkles enough time to complete their animation before being cleaned up.
 
-```tsx title=sparkling-text.tsx
+```tsx title="sparkling-text.tsx"
 const SparklingText: FunctionalComponent<Props> = ({ children }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);
@@ -202,7 +202,7 @@ This ensures React treats each sparkle as a new element, properly triggering the
 
 Finally, to make the sparkles appear on hover, we add pointer event listeners to the container. On devices that don’t support hover, like mobile, we simply let the animation run continuously instead.
 
-```tsx title=sparking-text.tsx
+```tsx title="sparking-text.tsx"
 const SparklingText: FunctionalComponent<Props> = ({ children }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [sparkles, setSparkles] = useState<Sparkle[]>([]);

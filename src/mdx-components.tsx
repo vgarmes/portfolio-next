@@ -68,4 +68,13 @@ export const mdxComponents: MDXComponents = {
     // Default codeblock.
     return <code {...props} />;
   },
+  a: ({ className, ...props }) => (
+    <a
+      className={cn(
+        "decoration-muted-foreground text-inherit underline decoration-1 underline-offset-4 transition-colors hover:decoration-inherit",
+        className,
+      )}
+      {...props}
+    />
+  ),
 };

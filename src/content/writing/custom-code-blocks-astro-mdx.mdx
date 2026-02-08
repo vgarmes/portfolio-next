@@ -20,7 +20,7 @@ This post assumes you have already configured [Astro's MDX integration](https://
 
 When you render MDX content in Astro using content collections, you typically use the `Content` component:`
 
-```astro title=src/pages/blog/post-1.astro
+```astro title="src/pages/blog/post-1.astro"
 ---
 import { getEntry, render } from 'astro:content'
 const entry = await getEntry('blog', 'post-1')
@@ -34,7 +34,7 @@ This transforms your Markdown into HTML. Code blocks become `<pre>` tags with Sh
 
 The key insight is that MDX lets you override these default HTML elements with custom components. By passing a `components` prop, we can intercept the `<pre>` tag and wrap it with our own component:
 
-```astro title=src/pages/blog/post-1.astro
+```astro title="src/pages/blog/post-1.astro"
 ---
 import { getEntry, render } from 'astro:content'
 import CodeBlock from '../../components/code-block.astro' // [!code highlight]
@@ -58,7 +58,7 @@ This `CodeBlock` can be any component you choose, but with a few considerations:
 
 With these constraints in mind, let's start with a simple component we can extend later:
 
-```astro title=src/components/code-block.astro
+```astro title="src/components/code-block.astro"
 ---
 import type { HTMLAttributes } from 'astro/types'
 
@@ -77,14 +77,14 @@ const props = Astro.props
 In Markdown, you can write metadata for a code block (the part after the triple backticks), for example a title:
 
 ````md
-```ts title=utils.ts
+```ts title="utils.ts"
 console.log("hello");
 ```
 ````
 
 By default, Astro's Shiki integration doesn't pass this metadata to your component. We need to add a [Shiki transformer](https://shiki.style/guide/transformers) in our Astro configuration to expose it:
 
-```ts title=astro.config.ts
+```ts title="astro.config.ts"
 export default defineConfig({
   markdown: {
     shikiConfig: {
@@ -107,7 +107,7 @@ This transformer runs when Shiki processes each code block, adding a `data-meta`
 
 Now we can access the metadata in our component. Update `CodeBlock` to parse the title and display it in a header:
 
-```astro title=src/components/code-block.astro
+```astro title="src/components/code-block.astro"
 ---
 import type { HTMLAttributes } from 'astro/types'
 
@@ -150,7 +150,7 @@ Astro's Shiki integration already passes a `data-language` attribute by default 
 
 Based on this, we can use it to map each language of interest to their corresponding icon:
 
-```astro title=src/components/code-block.astro
+```astro title="src/components/code-block.astro"
 ---
 import Typescript from '~/components/icons/Typescript.astro'
 import Terminal from '~/components/icons/Terminal.astro'
@@ -212,7 +212,7 @@ pnpm install @shikijs/transformers
 
 Then update your Astro configuration:
 
-```ts title=astro.config.ts
+```ts title="astro.config.ts"
 import {
   transformerNotationDiff,
   transformerNotationHighlight,
@@ -242,7 +242,7 @@ Now you can use the special comments `[!code highlight]`, `[!code ++]` and `[!co
 
 The final touch is a copy button. For that, we can grab the original code before any transformation, which is available in Shiki's transformers, and pass it as a `data-code` attribute to our component:
 
-```ts title=astro.config.ts
+```ts title="astro.config.ts"
 export default defineConfig({
   markdown: {
     shikiConfig: {
@@ -263,7 +263,7 @@ Finally, we can create a button component with the necessary client-side interac
 
 In this case and since I already have the corresponding integration in my Astro site, I've used a React component for simplicity:
 
-```tsx title=src/components/copy-button.tsx
+```tsx title="src/components/copy-button.tsx"
 export default function CopyButton({ textToCopy, className }: Props) {
   const { isCopied, copyToClipboard } = useCopyToClipboard();
   return (
@@ -296,7 +296,7 @@ For brevity, I omitted some of the logic like the hook to copy to clipboard. You
 
 Then access the code with our new `data` attribute and pass it in the `textToCopy` props:
 
-```astro title=src/components/code-block.astro
+```astro title="src/components/code-block.astro"
 ---
 interface Props extends HTMLAttributes<'pre'> {
   'data-meta': string
