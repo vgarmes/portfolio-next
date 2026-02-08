@@ -14,7 +14,7 @@ export const BackTopButton: React.FC = () => {
         });
       }}
     >
-      <CornerLeftUp />
+      <CornerLeftUp className="size-4" />
       Back to top
     </button>
   );

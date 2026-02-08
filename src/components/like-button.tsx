@@ -227,7 +227,7 @@ export const LikeButton: React.FC<Props> = ({
       <div className="relative flex">
         <button
           className={cx(
-            "relative transform overflow-hidden rounded-lg bg-linear-to-tl from-zinc-300 to-zinc-100 p-1 transition-all duration-300 ease-out enabled:hover:scale-110 enabled:active:scale-90 dark:from-white/5 dark:to-white/30",
+            "relative transform cursor-pointer overflow-hidden rounded-lg bg-linear-to-tl from-zinc-300 to-zinc-100 p-1 transition-all duration-300 ease-out enabled:hover:scale-110 enabled:active:scale-90 dark:from-white/5 dark:to-white/30",
             { "animate-pulse": isLoading },
           )}
           disabled={disabled}
