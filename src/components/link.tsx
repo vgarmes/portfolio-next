@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const Link: React.FC<Props> = ({
-  isExternal,
+  isExternal = false,
   href,
   className,
   children,
@@ -19,7 +19,7 @@ export const Link: React.FC<Props> = ({
   return (
     <LinkComponent
       className={cn(
-        "hover:decoration-foreground underline decoration-gray-800 decoration-1 underline-offset-2 transition-colors",
+        "underline decoration-neutral-300 decoration-1 underline-offset-2 transition-colors hover:decoration-neutral-500 dark:decoration-neutral-500 dark:hover:decoration-neutral-300",
         className,
       )}
       href={href}

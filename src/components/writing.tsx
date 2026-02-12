@@ -1,7 +1,8 @@
 import { getPosts } from "@/lib/data";
 import { formatDate } from "@/lib/date";
 import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
+import { Link } from "./link";
+import NextLink from "next/link";
 
 export const Writing: React.FC = () => {
   const posts = getPosts();
@@ -12,7 +13,7 @@ export const Writing: React.FC = () => {
       <ul className="flex flex-col gap-7 sm:gap-4">
         {posts.slice(0, 5).map((post) => (
           <li key={post.url}>
-            <Link
+            <NextLink
               href={post.url}
               className="hover:bg-muted hover:text-foreground dark:hover:bg-input/30 -mx-3 flex gap-1 rounded-md px-3 sm:py-3 md:grid md:grid-cols-[1fr_140px] md:gap-4"
             >
@@ -28,17 +29,12 @@ export const Writing: React.FC = () => {
               >
                 {formatDate(post.data.date)}
               </time>
-            </Link>
+            </NextLink>
           </li>
         ))}
       </ul>
       <div className="flex items-center gap-2">
-        <Link
-          href="/writing"
-          className="hover:decoration-foreground underline decoration-gray-800 decoration-1 underline-offset-2 transition-colors"
-        >
-          All writing
-        </Link>
+        <Link href="/writing">All writing</Link>
         <span className="text-muted-foreground text-sm">
           <ArrowUpRight className="size-4" />
         </span>

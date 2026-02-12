@@ -1,28 +1,34 @@
 import { Link } from "./link";
 
+export const NowContent: React.FC = () => {
+  return (
+    <div className="space-y-7">
+      <p>
+        Developing taste by surrounding myself with the work of people like Emil
+        Kowalski, Paco Coursey, Rauno Freiberg, Jhey Tompkins, shadcn. Studying
+        why certain interfaces feel great and timeless and bringing those ideas
+        into my own work.
+      </p>
+      <p>
+        Listening to drum & bass and jungle-music that brings back the nostalgia
+        of 90s games and late-night anime.{" "}
+        <Link
+          isExternal={true}
+          href="https://open.spotify.com/playlist/2dM1tFzsgcl0aq2SwNfgkv?si=cd5ab4f523e74d5f"
+        >
+          This playlist
+        </Link>{" "}
+        is a curation of some of my favorites.
+      </p>
+    </div>
+  );
+};
+
 export const Now: React.FC = () => {
   return (
     <section className="mt-16 sm:mt-32">
       <h3 className="mb-5 font-medium sm:mb-6">Now</h3>
-      <div className="space-y-7">
-        <p>
-          Developing taste by surrounding myself with the work of people like
-          Emil Kowalski, Paco Coursey, Rauno Freiberg, Jhey Tompkins, shadcn.
-          Studying why certain interfaces feel great and timeless and bringing
-          those ideas into my own work.
-        </p>
-        <p>
-          Listening to drum & bass and jungle-music that brings back the
-          nostalgia of 90s games and late-night anime.{" "}
-          <Link
-            isExternal={true}
-            href="https://open.spotify.com/playlist/2dM1tFzsgcl0aq2SwNfgkv?si=cd5ab4f523e74d5f"
-          >
-            This playlist
-          </Link>{" "}
-          is a curation of some of my favorites.
-        </p>
-      </div>
+      <NowContent />
     </section>
   );
 };
