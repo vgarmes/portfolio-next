@@ -10,11 +10,7 @@ I recently migrated this blog from Astro to Next.js. The migration went smoother
 
 Astro is an excellent framework for static content-driven sites. The main reason I picked up Astro back when I started designing my portfolio was its high performance with static sites due to using minimal JavaScript overhead as well as built-in support for Markdown, MDX and content collections.
 
-However, as I was writing more blog posts focused on design and interactive components, React code was taking over and I found it increasinly cumbersome to create these components using Astro's island architecture.
-
-This is why I finally decided to consolidate everything into Next.js.
-
-Most of my professional work and side projects already use React and Next.js, and I wanted my portfolio to reflect that anyway.
+However, as I was writing more blog posts focused on design and interactive components, React code was taking over and I found it increasingly cumbersome to create these components using Astro's island architecture. This is why I finally decided to consolidate everything into Next.js.
 
 I also wanted to take advantage of React Server Components for content rendering and have the flexibility to add more interactive features down the road without juggling two different component models.
 
@@ -52,7 +48,7 @@ export const collections = { writing: writingCollection };
 
 Astro handles the loading, parsing, and validation automatically. You query posts with `getCollection('writing')` and render them with `render(post)`.
 
-In Next.js, with some minimal configuration, you can render directly MDX using its file based routing or directly importing them as you would with any other React file.
+In Next.js, with some minimal configuration, you can directly render MDX using its file based routing or directly importing them as you would with any other React file.
 
 However, there's no built-in content collection system. For this reason, I chose [Fumadocs MDX](https://fumadocs.vercel.app/) to fill that gap, which provides a similar developer experience with `defineCollections`:
 
@@ -257,12 +253,41 @@ export default defineConfig({
 
 The config structure is nearly identical, which made this part of the migration trivial.
 
+## The tradeoff
+
+I ran Lighthouse against both deployed sites to see how the migration affected performance. The Astro site is hosted on GitHub Pages and the Next.js one on Vercel, so hosting differences could play a role, but as we'll see, the gap is not caused by the network.
+
+Worth noting that both sites are fully static. In Next.js, the blog pages use `generateStaticParams` to pre-render every post at build time, so no server-side rendering happens on demand. This makes the comparison fair: both are serving pre-built HTML.
+
+Here are the results for a blog post page:
+
+| Metric              | Astro            | Next.js       |
+| ------------------- | ---------------- | ------------- |
+| Performance Score   | 100              | 91            |
+| FCP                 | 0.9s             | 1.0s          |
+| LCP                 | 1.2s             | 3.0s          |
+| TBT                 | 0ms              | 0ms           |
+| CLS                 | 0                | 0             |
+| TTFB                | 402ms (GH Pages) | 95ms (Vercel) |
+| JS Transfer Size    | 8 KB             | 150 KB        |
+| Total Transfer Size | 92 KB            | 271 KB        |
+
+The First Contentful Paint is nearly identical, which means both sites start rendering at about the same time. Where they diverge is the Largest Contentful Paint.
+
+Looking at the LCP breakdown, it's not a network problem. Next.js on Vercel actually has a faster Time to First Byte (95ms vs 402ms on GitHub Pages). The bottleneck is the element render delay: 3,053ms on Next.js versus 1,486ms on Astro.
+
+The reason comes down to JavaScript. Astro ships roughly 8 KB of JS for the entire page (just Preact and a few small scripts for interactive islands). Next.js ships around 150 KB across multiple chunks: the React runtime, the framework runtime, and the page chunks. All of that needs to be downloaded and parsed before hydration completes, which delays the final paint.
+
+This is the fundamental tradeoff. Astro's zero-JavaScript-by-default approach means content is visible almost immediately. Next.js pays a cost for its runtime, even on pages that are mostly static.
+
+That said, both sites score well on Total Blocking Time and Cumulative Layout Shift, and the Next.js score of 91 is still good. For a content-heavy blog, though, Astro's approach to JavaScript is hard to beat.
+
 ## Wrapping up
 
 Overall, the migration was smoother than I expected. The MDX files themselves required minimal changes. The real work was in setting up the content pipeline with Fumadocs and converting Astro components to React.
 
 I like that now I use a single framework for everything, with React Server Components for content rendering and a better integration with the React ecosystem.
 
-The tradeoff is that I lost some of Astro's simplicity and zero-JavaScript guarantees (Next.js ships a small runtime even for static pages), but I think it was worth it for the flexibility and consistency.
+However, the tradeoff is real. Astro delivers better raw performance for static content thanks to shipping almost no JavaScript. But for me, the flexibility and consistency of a unified React stack was worth the few extra kilobytes.
 
 If your blog is purely content-driven and you don't need much interactivity, Astro is hard to beat. But if you're already invested in the React ecosystem and want a unified stack, Next.js with a library like Fumadocs is a solid alternative.

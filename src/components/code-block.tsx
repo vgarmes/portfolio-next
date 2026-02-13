@@ -32,7 +32,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({
 
   const displayedIcon = getDisplayedIcon(icon, dataLang);
   return (
-    <div className="relative my-6 overflow-hidden rounded-xl border shadow-sm">
+    <div className="relative my-6 overflow-hidden rounded-xl border shadow-xs">
       {displayedTitle && (
         <div className="bg-background flex h-12 items-center rounded-t-md border-b py-0 pr-3 pl-4">
           <div className="text-muted-foreground flex grow items-center justify-start gap-2">

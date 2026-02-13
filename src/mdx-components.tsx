@@ -77,4 +77,40 @@ export const mdxComponents: MDXComponents = {
       {...props}
     />
   ),
+  table: ({ className, ...props }: React.ComponentProps<"table">) => (
+    <div className="no-scrollbar my-6 w-full overflow-y-auto">
+      <table
+        className={cn(
+          "relative w-full border-separate border-spacing-0 overflow-hidden text-sm",
+          className,
+        )}
+        {...props}
+      />
+    </div>
+  ),
+  tr: ({ className, ...props }: React.ComponentProps<"tr">) => (
+    <tr
+      className={cn("m-0 [&:not(:last-child)_td]:border-b", className)}
+      {...props}
+    />
+  ),
+  th: ({ className, ...props }: React.ComponentProps<"th">) => (
+    <th
+      className={cn(
+        "text-muted-foreground bg-muted/30 border-y px-4 py-2 text-left font-normal first:rounded-l-md first:border-l last:rounded-r-md last:border-r [[align=center]]:text-center [[align=right]]:text-right",
+        className,
+      )}
+      {...props}
+    />
+  ),
+
+  td: ({ className, ...props }: React.ComponentProps<"td">) => (
+    <td
+      className={cn(
+        "px-4 py-2 text-left text-sm whitespace-nowrap [[align=center]]:text-center [[align=right]]:text-right",
+        className,
+      )}
+      {...props}
+    />
+  ),
 };
