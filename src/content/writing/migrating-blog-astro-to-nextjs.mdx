@@ -1,0 +1,268 @@
+---
+title: "Migrating my blog from Astro to Next.js"
+date: 2026-02-13
+description: "Lessons learned migrating frameworks for an MDX-based blog."
+---
+
+I recently migrated this blog from Astro to Next.js. The migration went smoother than expected, but handling MDX content required a completely different approach. In this post, I'll share the key differences and the decisions I made along the way.
+
+## Why migrate?
+
+Astro is an excellent framework for static content-driven sites. The main reason I picked up Astro back when I started designing my portfolio was its high performance with static sites due to using minimal JavaScript overhead as well as built-in support for Markdown, MDX and content collections.
+
+However, as I was writing more blog posts focused on design and interactive components, React code was taking over and I found it increasinly cumbersome to create these components using Astro's island architecture.
+
+This is why I finally decided to consolidate everything into Next.js.
+
+Most of my professional work and side projects already use React and Next.js, and I wanted my portfolio to reflect that anyway.
+
+I also wanted to take advantage of React Server Components for content rendering and have the flexibility to add more interactive features down the road without juggling two different component models.
+
+## Content collections
+
+Both frameworks use [zod](https://zod.dev/) for schema validation, but the APIs differ significantly.
+
+In Astro, content collections are a first-class feature. You define them in a `content.config.ts` file using Astro's built-in utilities:
+
+```ts title="content.config.ts"
+import { z, defineCollection } from "astro:content";
+import { glob } from "astro/loaders";
+
+const writingCollection = defineCollection({
+  loader: glob({
+    pattern: "**/*.{md,mdx}",
+    base: "./src/content/writing",
+  }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.date(),
+    image: z
+      .object({
+        src: z.string(),
+        alt: z.string(),
+      })
+      .optional(),
+    draft: z.boolean().optional().default(false),
+  }),
+});
+
+export const collections = { writing: writingCollection };
+```
+
+Astro handles the loading, parsing, and validation automatically. You query posts with `getCollection('writing')` and render them with `render(post)`.
+
+In Next.js, with some minimal configuration, you can render directly MDX using its file based routing or directly importing them as you would with any other React file.
+
+However, there's no built-in content collection system. For this reason, I chose [Fumadocs MDX](https://fumadocs.vercel.app/) to fill that gap, which provides a similar developer experience with `defineCollections`:
+
+```ts title="source.config.ts"
+import {
+  defineConfig,
+  defineCollections,
+  frontmatterSchema,
+} from "fumadocs-mdx/config";
+import * as z from "zod";
+
+export const posts = defineCollections({
+  type: "doc",
+  dir: "src/content/writing",
+  schema: frontmatterSchema.extend({
+    title: z.string(),
+    description: z.string(),
+    date: z.date(),
+    image: z
+      .object({
+        src: z.string(),
+        alt: z.string(),
+      })
+      .optional(),
+    draft: z.boolean().optional().default(false),
+  }),
+});
+```
+
+Fumadocs generates a type-safe source that you can wrap with a loader to define your base URL and query posts. It's not as seamless as Astro's built-in solution, but it gets the job done and integrates well with the Next.js ecosystem.
+
+## Rendering MDX
+
+This is where the two frameworks differ the most.
+
+In Astro, rendering an MDX post is straightforward. You call `render()` on a collection entry and get back a `Content` component along with metadata like headings:
+
+```astro title="[id].astro"
+---
+import { getCollection, render } from 'astro:content'
+import PostLayout from '~/layouts/post.astro'
+
+export async function getStaticPaths() {
+  const posts = await getCollection('writing')
+  return posts.map(post => ({
+    params: { id: post.id },
+    props: post
+  }))
+}
+
+const post = Astro.props
+const { Content, headings } = await render(post)
+---
+
+<PostLayout frontmatter={post.data} headings={headings}>
+  <Content components={mdxComponents} />
+</PostLayout>
+```
+
+In Next.js, MDX content is compiled ahead of time by Fumadocs and exposed as a React component. The page is a Server Component that receives the slug from the route params:
+
+```tsx title="[slug]/page.tsx"
+import { source } from "./source";
+
+export const getPost = (slug: string) => {
+  return source.getPage([slug]);
+};
+
+export const getPosts = () => {
+  return source.getPages().sort((a, b) => {
+    const dateA = new Date(a.data.date);
+    const dateB = new Date(b.data.date);
+
+    return dateB.getTime() - dateA.getTime();
+  });
+};
+
+export function generateStaticParams() {
+  return getPosts().map((post) => ({
+    slug: post.slugs[0],
+  }));
+}
+
+export default async function Page({ params }) {
+  const slug = (await params).slug;
+  const page = getPost(slug);
+  const Mdx = page.data.body;
+
+  return (
+    <article>
+      <Mdx components={mdxComponents} />
+    </article>
+  );
+}
+```
+
+The core concept is similar, as both give you a renderable component for your MDX content, but the surrounding patterns are different.
+
+Astro uses its own file-based component format with frontmatter scripts, while Next.js uses standard React components.
+
+One thing I appreciated about the Next.js approach is that the MDX body is just a React component you can render anywhere, which feels very natural if you're already used to React.
+
+## Custom MDX components
+
+Both frameworks let you override default HTML elements with custom components. The approach is almost identical: you create a map of element names to components and pass it to the MDX renderer.
+
+In Astro, you might write your custom components as `.astro` files:
+
+```astro title="code-block.astro"
+---
+const { class: className, ...props } = Astro.props
+---
+<pre class:list={["custom-code-block", className]} {...props}>
+  <slot />
+</pre>
+```
+
+Then export them in a separate file:
+
+```astro title="mdx-components.astro"
+---
+import CodeBlock from './code-block.astro'
+
+export const mdxComponents = {
+	pre: CodeBlock
+}
+---
+```
+
+In Next.js, they're just React components:
+
+```tsx title="mdx-components.tsx"
+export const mdxComponents = {
+  pre: (props) => <pre className="custom-code-block" {...props} />,
+};
+```
+
+The migration here was mostly mechanical. Converting `.astro` component syntax to React JSX. The biggest differences were replacing `<slot />` with `{children}`, `class` with `className`, and adapting Astro's frontmatter script block to standard JavaScript.
+
+## Interactive components
+
+This is where the architectural differences really show up.
+
+Astro uses an island architecture. Most of the page is static HTML, and interactive components are hydrated selectively using directives like `client:load` or `client:visible`. In my Astro blog, I used Preact for interactive components:
+
+```astro
+<LikeButton client:visible />
+```
+
+In Next.js, the equivalent is the `'use client'` directive. Components are Server Components by default (rendered on the server, zero JavaScript shipped), and you opt into client-side interactivity when needed:
+
+```tsx title="like-button.tsx"
+"use client";
+
+import { useState } from "react";
+
+export function LikeButton() {
+  const [liked, setLiked] = useState(false);
+  // ...
+}
+```
+
+Both approaches achieve the same goal (shipping less JavaScript by default) but they do it differently. Astro's model is more explicit (you choose when to hydrate), while Next.js's model is more implicit (everything is a Server Component unless you opt out).
+
+In practice, I found the Next.js approach easier to reason about since I didn't have to think about hydration directives or maintain a separate Preact dependency.
+
+## Code syntax highlighting
+
+Both setups use Shiki with the same themes (I use `github-light-high-contrast` for light mode, `vesper` for dark mode) and the same transformers for diff and highlight notation. The configuration is remarkably similar.
+
+In Astro, Shiki is configured directly in `astro.config.ts` under the `markdown` key:
+
+```ts title="astro.config.ts"
+export default defineConfig({
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: "github-light-high-contrast",
+        dark: "vesper",
+      },
+      transformers: [transformerNotationHighlight(), transformerNotationDiff()],
+    },
+  },
+});
+```
+
+In Next.js with Fumadocs, the configuration lives in `source.config.ts` under `rehypeCodeOptions`:
+
+```ts title="source.config.ts"
+export default defineConfig({
+  mdxOptions: {
+    rehypeCodeOptions: {
+      themes: {
+        light: "github-light-high-contrast",
+        dark: "vesper",
+      },
+      transformers: [transformerNotationHighlight(), transformerNotationDiff()],
+    },
+  },
+});
+```
+
+The config structure is nearly identical, which made this part of the migration trivial.
+
+## Wrapping up
+
+Overall, the migration was smoother than I expected. The MDX files themselves required minimal changes. The real work was in setting up the content pipeline with Fumadocs and converting Astro components to React.
+
+I like that now I use a single framework for everything, with React Server Components for content rendering and a better integration with the React ecosystem.
+
+The tradeoff is that I lost some of Astro's simplicity and zero-JavaScript guarantees (Next.js ships a small runtime even for static pages), but I think it was worth it for the flexibility and consistency.
+
+If your blog is purely content-driven and you don't need much interactivity, Astro is hard to beat. But if you're already invested in the React ecosystem and want a unified stack, Next.js with a library like Fumadocs is a solid alternative.
