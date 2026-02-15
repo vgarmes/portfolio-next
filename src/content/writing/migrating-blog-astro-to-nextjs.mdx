@@ -253,7 +253,7 @@ export default defineConfig({
 
 The config structure is nearly identical, which made this part of the migration trivial.
 
-## The tradeoff
+## The performance tradeoff
 
 I ran Lighthouse against both deployed sites to see how the migration affected performance. The Astro site is hosted on GitHub Pages and the Next.js one on Vercel, so hosting differences could play a role, but as we'll see, the gap is not caused by the network.
 
@@ -261,16 +261,16 @@ Worth noting that both sites are fully static. In Next.js, the blog pages use `g
 
 Here are the results for a blog post page:
 
-| Metric              | Astro            | Next.js       |
-| ------------------- | ---------------- | ------------- |
-| Performance Score   | 100              | 91            |
-| FCP                 | 0.9s             | 1.0s          |
-| LCP                 | 1.2s             | 3.0s          |
-| TBT                 | 0ms              | 0ms           |
-| CLS                 | 0                | 0             |
-| TTFB                | 402ms (GH Pages) | 95ms (Vercel) |
-| JS Transfer Size    | 8 KB             | 150 KB        |
-| Total Transfer Size | 92 KB            | 271 KB        |
+| Metric              | Astro          | Next.js       |
+| ------------------- | -------------- | ------------- |
+| Performance Score   | 100            | 91            |
+| FCP                 | 0.9s           | 1.0s          |
+| LCP                 | 1.2s           | 3.0s          |
+| TBT                 | 0ms            | 0ms           |
+| CLS                 | 0              | 0             |
+| TTFB                | 402ms (GitHub) | 95ms (Vercel) |
+| JS Transfer Size    | 8 KB           | 150 KB        |
+| Total Transfer Size | 92 KB          | 271 KB        |
 
 The First Contentful Paint is nearly identical, which means both sites start rendering at about the same time. Where they diverge is the Largest Contentful Paint.
 
