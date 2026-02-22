@@ -192,7 +192,7 @@ The migration here was mostly mechanical. Converting `.astro` component syntax t
 
 This is where the architectural differences really show up.
 
-Astro uses an island architecture. Most of the page is static HTML, and interactive components are hydrated selectively using directives like `client:load` or `client:visible`. In my Astro blog, I used Preact for interactive components:
+Astro uses an island architecture. Most of the page is static HTML, and interactive components are hydrated selectively using directives like `client:load` or `client:visible`. In my Astro blog, I used Preact for interactive components. Preact is a lightweight alternative to React with a nearly identical API but a much smaller runtime (~3 KB vs ~45 KB for React):
 
 ```astro
 <LikeButton client:visible />
@@ -257,7 +257,9 @@ The config structure is nearly identical, which made this part of the migration 
 
 I ran Lighthouse against both deployed sites to see how the migration affected performance. The Astro site is hosted on GitHub Pages and the Next.js one on Vercel, so hosting differences could play a role, but as we'll see, the gap is not caused by the network.
 
-Worth noting that both sites are fully static. In Next.js, the blog pages use `generateStaticParams` to pre-render every post at build time, so no server-side rendering happens on demand. This makes the comparison fair: both are serving pre-built HTML.
+Worth noting that both sites are fully static. In Next.js, the blog pages use `generateStaticParams` to pre-render every post at build time, so no server-side rendering happens on demand. Both are serving pre-built HTML.
+
+One caveat: this comparison isn't entirely fair. The Astro site uses Preact for its interactive islands, not React. Preact's runtime is around 3 KB, while React's is closer to 45 KB. So some of the JS bundle gap is inherent to the framework choice (Preact vs. React), not just Astro's architecture. If the Astro site had used React islands instead, the difference would be smaller.
 
 Here are the results for a blog post page:
 
@@ -280,7 +282,7 @@ The reason comes down to JavaScript. Astro ships roughly 8 KB of JS for the enti
 
 This is the fundamental tradeoff. Astro's zero-JavaScript-by-default approach means content is visible almost immediately. Next.js pays a cost for its runtime, even on pages that are mostly static.
 
-That said, both sites score well on Total Blocking Time and Cumulative Layout Shift, and the Next.js score of 91 is still good. For a content-heavy blog, though, Astro's approach to JavaScript is hard to beat.
+That said, both sites score well on Total Blocking Time and Cumulative Layout Shift, and the Next.js score of 91 is still good. For a content-heavy blog, Astro's approach to JavaScript is hard to beat.
 
 ## Wrapping up
 
