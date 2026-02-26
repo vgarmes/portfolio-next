@@ -71,7 +71,7 @@ export const mdxComponents: MDXComponents = {
   a: ({ className, ...props }) => (
     <a
       className={cn(
-        "decoration-muted-foreground text-inherit underline decoration-1 underline-offset-4 transition-colors hover:decoration-inherit",
+        "underline decoration-neutral-300 decoration-1 underline-offset-3 transition-colors hover:decoration-neutral-500 dark:decoration-neutral-500 dark:hover:decoration-neutral-300",
         className,
       )}
       {...props}

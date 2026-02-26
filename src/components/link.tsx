@@ -19,7 +19,7 @@ export const Link: React.FC<Props> = ({
   return (
     <LinkComponent
       className={cn(
-        "underline decoration-neutral-300 decoration-1 underline-offset-2 transition-colors hover:decoration-neutral-500 dark:decoration-neutral-500 dark:hover:decoration-neutral-300",
+        "underline decoration-neutral-300 decoration-1 underline-offset-4 transition-colors hover:decoration-neutral-500 dark:decoration-neutral-500 dark:hover:decoration-neutral-300",
         className,
       )}
       href={href}
