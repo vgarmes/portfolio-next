@@ -4,6 +4,8 @@ date: 2026-02-13
 description: "Lessons learned migrating frameworks for an MDX-based blog."
 ---
 
+import { Link } from "@/components/link";
+
 I recently migrated this blog from Astro to Next.js. The migration went smoother than expected, but handling MDX content required a completely different approach. In this post, I'll share the key differences and the decisions I made along the way.
 
 ## Why migrate?
@@ -52,7 +54,7 @@ Astro handles the loading, parsing, and validation automatically. You query post
 
 In Next.js, with some minimal configuration, you can directly render MDX using its file based routing or directly importing them as you would with any other React file.
 
-However, there's no built-in content collection system. For this reason, I chose [Fumadocs MDX](https://fumadocs.vercel.app/) to fill that gap, which provides a similar developer experience with `defineCollections`:
+However, there's no built-in content collection system. For this reason, I chose [Fumadocs MDX](https://fumadocs.vercel.app/) to fill that gap (I wrote more about Fumadocs in <Link href="/writing/how-shadcn-documentation-is-built">How shadcn's Documentation is Built</Link>, which provides a similar developer experience with `defineCollections`:
 
 ```ts title="source.config.ts"
 import {
