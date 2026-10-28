@@ -249,7 +249,7 @@ const searchingFrames = [
   [],
 ] as Frames;
 
-const busyFrames = [
+export const busyFrames = [
   [
     [0, 1],
     [0, 2],
@@ -635,12 +635,12 @@ export const FlipDotGridDemo: React.FC = () => {
 
   return (
     <Demo>
-      <div className="flex cursor-pointer items-center justify-center gap-3 rounded-xl bg-gray-300 px-3 py-6 hover:scale-105">
+      <div className="bg-muted flex cursor-pointer items-center justify-center gap-3 rounded-xl px-3 py-6 hover:scale-105">
         <FlipDotGrid
           gridSize={[5, 5]}
           frames={states[state].frames}
           cellClassName="size-[3px]"
-          cellInactiveClassName="bg-gray-700"
+          cellInactiveClassName="bg-foreground/15"
         />
         <span className="text-muted-foreground font-mono">
           {states[state].label}
