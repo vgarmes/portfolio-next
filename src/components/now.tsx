@@ -1,4 +1,5 @@
 import { Link } from "./link";
+import { NowPlaying } from "./now-playing";
 
 export const NowContent: React.FC = () => {
   return (
@@ -27,7 +28,10 @@ export const NowContent: React.FC = () => {
 export const Now: React.FC = () => {
   return (
     <section className="mt-16 sm:mt-32">
-      <h3 className="mb-5 font-medium sm:mb-6">Now</h3>
+      <div className="mb-5 flex items-center justify-between gap-4 sm:mb-6">
+        <h3 className="font-medium">Now</h3>
+        <NowPlaying />
+      </div>
       <NowContent />
     </section>
   );

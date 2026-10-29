@@ -1,0 +1,63 @@
+.item {
+  --duration: 900ms;
+  --easing: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hidden {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.enter {
+  animation: enter var(--duration) var(--easing) both;
+}
+
+.exit {
+  animation: exit var(--duration) var(--easing) both;
+}
+
+@keyframes enter {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@keyframes exit {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+    filter: blur(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes enter {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes exit {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+}

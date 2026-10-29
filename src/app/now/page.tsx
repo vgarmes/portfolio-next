@@ -1,4 +1,5 @@
 import { NowContent } from "@/components/now";
+import { NowPlaying } from "@/components/now-playing";
 import { Undo2 } from "lucide-react";
 import Link from "next/link";
 
@@ -14,8 +15,9 @@ const NowPage: React.FC = () => {
           Index
         </Link>
       </aside>
-      <header className="mb-12">
+      <header className="mb-12 flex items-center justify-between gap-4">
         <h1 className="font-medium">Now</h1>
+        <NowPlaying />
       </header>
       <NowContent />
     </>
