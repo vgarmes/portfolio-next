@@ -1,126 +1,100 @@
 "use client";
 
 import cx from "clsx";
-import { useState } from "react";
-import { busyFrames as pongFrames } from "./demos/flip-dot-matrix";
-import {
-  FlipDotGrid,
-  type Frame,
-  type FrameDot,
-  type Frames,
-} from "./flip-dot-matrix";
+import { useRef, useState } from "react";
+import { FlipDotGrid, type Frames } from "./flip-dot-matrix";
+import { animations, GRID_SIZE, HEART, OFF } from "./like-animations";
 
-const GRID_SIZE: [number, number] = [5, 5];
+const LOOPS_PER_LIKE = 3;
 
-const toFrame = (rows: string[]): Frame =>
-  rows.flatMap((row, y) =>
-    [...row].flatMap((char, x): FrameDot[] => (char === "#" ? [[x, y]] : [])),
-  );
+// Each animation repeated, built once so the frames stay the same array
+const likeAnimations = animations.map((animation) => ({
+  ...animation,
+  frames: Array.from(
+    { length: animation.loops ?? LOOPS_PER_LIKE },
+    () => animation.frames,
+  ).flat(),
+}));
 
-// prettier-ignore
-const HEART = toFrame([
-  ".#.#.",
-  "#####",
-  "#####",
-  ".###.",
-  "..#..",
-]);
+const offFrames: Frames = [OFF];
+const heartFrames: Frames = [HEART];
 
-const unlitFrames: Frames = [];
-const litFrames: Frames = [HEART];
-
-// The heart lights up row by row, from the bottom
-const likeFrames: Frames = Array.from({ length: GRID_SIZE[1] }, (_, i) =>
-  HEART.filter(([, y]) => y >= GRID_SIZE[1] - 1 - i),
-);
-
-const heartDots = new Set(HEART.map(([x, y]) => `${x},${y}`));
-
-const foregroundMix = (percent: number) =>
-  `color-mix(in oklab, var(--foreground) ${percent}%, transparent)`;
-
-// Unlit heart dots are a subtle gray, brighter than the rest of the grid
-const unlitStyle = (x: number, y: number) => {
-  const isHeart = heartDots.has(`${x},${y}`);
-  return {
-    "--dot-off": foregroundMix(isHeart ? 35 : 10),
-    "--dot-hover": foregroundMix(isHeart ? 55 : 10),
-  } as React.CSSProperties;
+// Random animation, never the same one twice in a row
+const pickAnimation = (previous: number | null) => {
+  if (previous === null) {
+    return Math.floor(Math.random() * animations.length);
+  }
+  const next = Math.floor(Math.random() * (animations.length - 1));
+  return next >= previous ? next + 1 : next;
 };
 
 interface Props {
   likes: number;
-  liked?: boolean;
   isLoading?: boolean;
   disabled?: boolean;
+  // Shows the heart once the visitor can't like any more
+  maxedOut?: boolean;
   onClick: () => void;
 }
 
 export const HeartButton: React.FC<Props> = ({
   likes = 0,
-  liked = false,
   isLoading = false,
   disabled = false,
+  maxedOut = false,
   onClick,
 }) => {
-  const [animateLike, setAnimateLike] = useState(false);
+  const [current, setCurrent] = useState<number | null>(null);
+  const previous = useRef<number | null>(null);
+  const playing = current !== null;
+  const animation = playing ? likeAnimations[current] : null;
 
   const handleClick = () => {
-    setAnimateLike(true);
+    if (playing) return;
+    const next = pickAnimation(previous.current);
+    previous.current = next;
+    setCurrent(next);
     onClick();
   };
 
-  return (
-    <div className="flex items-center gap-2">
-      <button
-        type="button"
-        aria-label={
-          isLoading ? "Loading likes" : liked ? "Liked" : "Like this post"
-        }
-        aria-pressed={liked}
-        aria-busy={isLoading}
-        disabled={disabled || isLoading || liked}
-        onClick={handleClick}
-        className={cx(
-          "group rounded-lg p-1.5 transition-transform duration-200 ease-out enabled:active:scale-90",
-          { "cursor-default": liked },
-        )}
-      >
-        {isLoading ? (
-          <FlipDotGrid
-            gridSize={GRID_SIZE}
-            frames={pongFrames}
-            duration={150}
-            cellClassName="size-1"
-            cellActiveClassName="bg-foreground"
-            cellInactiveClassName="bg-foreground/10"
-          />
-        ) : (
-          <FlipDotGrid
-            gridSize={GRID_SIZE}
-            frames={
-              liked ? (animateLike ? likeFrames : litFrames) : unlitFrames
-            }
-            duration={90}
-            loop={false}
-            cellClassName="size-1"
-            cellStyle={unlitStyle}
-            cellActiveClassName="bg-foreground"
-            cellInactiveClassName="bg-(--dot-off) group-enabled:group-hover:bg-(--dot-hover)"
-          />
-        )}
-      </button>
+  const frames = animation
+    ? animation.frames
+    : maxedOut
+      ? heartFrames
+      : offFrames;
 
+  return (
+    <button
+      type="button"
+      aria-label={`Like this post, ${likes} ${likes === 1 ? "like" : "likes"}`}
+      aria-busy={isLoading}
+      // Not disabled while playing, that would drop keyboard focus
+      aria-disabled={playing}
+      disabled={disabled || isLoading || maxedOut}
+      onClick={handleClick}
+      className="flex items-center gap-2 rounded-lg border py-1.5 pr-2.5 pl-2 transition-transform duration-200 ease-out enabled:not-aria-disabled:active:scale-95 disabled:cursor-default aria-disabled:cursor-default"
+    >
+      <FlipDotGrid
+        gridSize={GRID_SIZE}
+        frames={frames}
+        duration={animation?.duration ?? 90}
+        loop={false}
+        onFinish={playing ? () => setCurrent(null) : undefined}
+        cellClassName="size-1"
+        cellActiveClassName="bg-foreground"
+        cellInactiveClassName="bg-foreground/10"
+      />
       <span
-        aria-live="polite"
+        aria-hidden
         className={cx(
-          "font-mono text-sm whitespace-nowrap tabular-nums transition-opacity",
-          liked ? "text-foreground" : "text-muted-foreground",
+          // Same width as the dot matrix: 5 dots of 4px and 4 gaps of 2px
+          "min-w-7 text-center text-sm tabular-nums transition-opacity",
+          playing || maxedOut ? "text-foreground" : "text-muted-foreground",
           { "opacity-0": isLoading },
         )}
       >
-        {likes} {likes === 1 ? "like" : "likes"}
+        {likes}
       </span>
-    </div>
+    </button>
   );
 };

@@ -4,7 +4,7 @@ import { FlipDotGrid, type Frames } from "@/components/flip-dot-matrix";
 import { useEffect, useState } from "react";
 import { Demo } from "../demo";
 
-const importingFrames = [
+export const importingFrames = [
   [[2, 2]],
   [
     [1, 2],
@@ -145,7 +145,7 @@ const arrowDownFrames = [
   [],
 ] as Frames;
 
-const arrowUpFrames = [
+export const arrowUpFrames = [
   [[2, 4]],
   [
     [1, 4],
@@ -249,7 +249,7 @@ const searchingFrames = [
   [],
 ] as Frames;
 
-export const busyFrames = [
+const busyFrames = [
   [
     [0, 1],
     [0, 2],

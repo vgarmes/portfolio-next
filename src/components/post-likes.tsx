@@ -1,9 +1,12 @@
 import { HeartButton } from "./heart-button";
 
+// Keep in sync with the per visitor limit enforced by the API
+const MAX_USER_LIKES = 3;
+
 interface Props {
   slug: string;
   likes?: number;
-  liked?: boolean;
+  userLikes?: number;
   isLoading?: boolean;
   disabled?: boolean;
   onLike: () => void;
@@ -12,13 +15,15 @@ interface Props {
 export const PostLikes: React.FC<Props> = ({
   slug,
   likes = 0,
-  liked = false,
+  userLikes = 0,
   isLoading,
   disabled,
   onLike,
 }) => {
+  const reachedMaxLikes = userLikes >= MAX_USER_LIKES;
+
   const handleClick = () => {
-    if (liked) {
+    if (reachedMaxLikes) {
       return;
     }
     onLike();
@@ -31,7 +36,7 @@ export const PostLikes: React.FC<Props> = ({
   return (
     <HeartButton
       likes={likes}
-      liked={liked}
+      maxedOut={reachedMaxLikes}
       disabled={disabled}
       isLoading={isLoading}
       onClick={handleClick}

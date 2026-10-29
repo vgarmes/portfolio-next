@@ -9,7 +9,7 @@ interface Props {
 
 export const PostStats = ({ slug }: Props) => {
   const [likes, setLikes] = useState(0);
-  const [liked, setLiked] = useState(false);
+  const [userLikes, setUserLikes] = useState(0);
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading",
   );
@@ -29,8 +29,7 @@ export const PostStats = ({ slug }: Props) => {
       };
 
       setLikes(data.totalLikes);
-      // Visitors could previously like up to 3 times, any like counts as liked
-      setLiked(data.userLikes > 0);
+      setUserLikes(data.userLikes);
       setStatus("success");
     };
 
@@ -46,10 +45,10 @@ export const PostStats = ({ slug }: Props) => {
     <PostLikes
       slug={slug}
       likes={likes}
-      liked={liked}
+      userLikes={userLikes}
       onLike={() => {
-        setLikes(likes + 1);
-        setLiked(true);
+        setLikes((likes) => likes + 1);
+        setUserLikes((userLikes) => userLikes + 1);
       }}
       isLoading={status === "loading"}
       disabled={status === "error"}

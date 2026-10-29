@@ -3,8 +3,8 @@
 
 import {
   ComponentPropsWithoutRef,
-  CSSProperties,
   useEffect,
+  useEffectEvent,
   useState,
   useSyncExternalStore,
 } from "react";
@@ -17,16 +17,16 @@ type Frames = Frame[];
 type FlipDotGridProps = {
   gridSize: [number, number];
   // Keep the array stable between renders, a new one restarts the animation
-  frames?: Frames;
+  frames: Frames;
   duration?: number;
   animate?: boolean;
   loop?: boolean;
+  // Called once the last frame of an animation without loop has been shown
+  onFinish?: () => void;
   // Fade dots between frames instead of switching instantly
   fade?: boolean;
   cellClassName?: string;
   cellProps?: ComponentPropsWithoutRef<"div">;
-  // Per dot styles, e.g. CSS variables to drive a CSS animation
-  cellStyle?: (x: number, y: number) => CSSProperties;
   cellActiveClassName?: string;
   cellInactiveClassName?: string;
 } & ComponentPropsWithoutRef<"div">;
@@ -46,18 +46,16 @@ const usePrefersReducedMotion = () =>
     () => false,
   );
 
-const NO_FRAMES: Frames = [];
-
 const FlipDotGrid = ({
   gridSize,
-  frames = NO_FRAMES,
+  frames,
   duration = 200,
   animate = true,
   loop = true,
+  onFinish,
   fade = true,
   cellClassName,
   cellProps,
-  cellStyle,
   cellActiveClassName,
   cellInactiveClassName,
   className,
@@ -85,6 +83,16 @@ const FlipDotGrid = ({
     );
     return () => clearInterval(intervalId);
   }, [running, loop, frames.length, duration]);
+
+  // With reduced motion the last frame shows straight away, so it's done too
+  const done = !loop && frames.length > 0 && (finished || reducedMotion);
+  const finish = useEffectEvent(() => onFinish?.());
+  useEffect(() => {
+    if (!done) return;
+    // Give the last frame the same time on screen as the others
+    const timeoutId = setTimeout(finish, reducedMotion ? 0 : duration);
+    return () => clearTimeout(timeoutId);
+  }, [done, reducedMotion, duration]);
 
   // With reduced motion, loops rest on their first frame and one-off
   // animations jump to their last
@@ -125,7 +133,6 @@ const FlipDotGrid = ({
           style={{
             ...(fade && { transitionDuration: `${duration * 1.5}ms` }),
             ...cellProps?.style,
-            ...cellStyle?.(i % cols, Math.floor(i / cols)),
           }}
         />
       ))}
