@@ -1,6 +1,11 @@
 .item {
+  /* one change of item: old text + cover leave, then new text + cover arrive */
   --duration: 900ms;
+  --out: calc(var(--duration) * 0.5);
+  --in: calc(var(--duration) * 0.5);
   --easing: cubic-bezier(0.22, 1, 0.36, 1);
+  /* gentler curve for leaving, so the exit doesn't snap away */
+  --easing-out: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .hidden {
@@ -8,12 +13,46 @@
   opacity: 0;
 }
 
-.enter {
-  animation: enter var(--duration) var(--easing) both;
+.exit {
+  animation: exit var(--out) var(--easing-out) both;
 }
 
-.exit {
-  animation: exit var(--duration) var(--easing) both;
+.enter {
+  animation: enter var(--in) var(--easing) var(--out) both;
+}
+
+.coverExit {
+  animation: cover-exit var(--out) var(--easing-out) both;
+}
+
+.coverEnter {
+  animation: cover-enter var(--in) var(--easing) var(--out) both;
+}
+
+@keyframes cover-exit {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* fully visible early so the grow to full size is what you see */
+@keyframes cover-enter {
+  0% {
+    transform: scale(0.4);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes enter {
@@ -53,6 +92,24 @@
   }
 
   @keyframes exit {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes cover-enter {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes cover-exit {
     from {
       opacity: 1;
     }

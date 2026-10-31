@@ -12,6 +12,19 @@ const LABELS: Record<NowPlayingItem["kind"], string> = {
   playing: "Playing",
 };
 
+const stateClass = (
+  i: number,
+  current: number,
+  previous: number | null,
+  enter: string,
+  exit: string,
+) =>
+  i === current
+    ? previous !== null && enter
+    : i === previous
+      ? exit
+      : styles.hidden;
+
 interface Props {
   items: NowPlayingItem[];
   interval?: number;
@@ -20,7 +33,7 @@ interface Props {
 
 export const NowPlayingTicker: React.FC<Props> = ({
   items,
-  interval = 4000,
+  interval = 10000,
   className,
 }) => {
   // previous is null until the first rotation, so nothing animates on load
@@ -58,34 +71,47 @@ export const NowPlayingTicker: React.FC<Props> = ({
           </li>
         ))}
       </ul>
-      <div aria-hidden className="relative h-8 overflow-hidden">
-        {items.map((item, i) => (
-          <div
-            key={`${item.kind}-${item.title}`}
-            className={cn(
-              styles.item,
-              "absolute inset-0 flex items-center justify-end gap-2",
-              i === current
-                ? previous !== null && styles.enter
-                : i === previous
-                  ? styles.exit
-                  : styles.hidden,
-            )}
-          >
-            <span className="text-muted-foreground shrink-0">
-              {LABELS[item.kind]}
-            </span>
-            <span className="truncate">{item.title}</span>
+      <div aria-hidden className="flex h-8 items-center gap-2">
+        <div className="relative h-full min-w-0 flex-1 overflow-hidden">
+          {items.map((item, i) => (
+            <div
+              key={`${item.kind}-${item.title}`}
+              className={cn(
+                styles.item,
+                "absolute inset-0 flex items-center justify-end gap-2",
+                stateClass(i, current, previous, styles.enter, styles.exit),
+              )}
+            >
+              <span className="text-muted-foreground shrink-0">
+                {LABELS[item.kind]}
+              </span>
+              <span className="truncate">{item.title}</span>
+            </div>
+          ))}
+        </div>
+        <div className="relative size-7 shrink-0">
+          {items.map((item, i) => (
             <Image
+              key={`${item.kind}-${item.title}`}
               src={item.cover}
               alt=""
               width={28}
               height={28}
               unoptimized
-              className="bg-muted size-7 shrink-0 rounded-md border-2 object-cover"
+              className={cn(
+                styles.item,
+                "bg-muted absolute inset-0 size-7 rounded-md border-2 object-cover",
+                stateClass(
+                  i,
+                  current,
+                  previous,
+                  styles.coverEnter,
+                  styles.coverExit,
+                ),
+              )}
             />
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );
