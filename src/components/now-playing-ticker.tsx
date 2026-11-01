@@ -33,7 +33,7 @@ interface Props {
 
 export const NowPlayingTicker: React.FC<Props> = ({
   items,
-  interval = 10000,
+  interval = 5000,
   className,
 }) => {
   // previous is null until the first rotation, so nothing animates on load
