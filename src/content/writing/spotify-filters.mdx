@@ -1,5 +1,5 @@
 ---
-title: "Spotify Filters"
+title: "Spotify Stacked Filters"
 date: 2025-06-12
 description: "Filtering pattern from Spotify on iOS."
 tags: ["design", "web development"]
@@ -10,11 +10,13 @@ import SpotifyFilters from "@/components/demos/spotify-filters.tsx";
 import { Demo } from "@/components/demo.tsx";
 
 <Demo>
-  <div class="flex items-center justify-center px-4 py-12">
-    <SpotifyFilters client:visible />
+  <div className="flex items-center justify-center px-4 py-12">
+    <SpotifyFilters />
   </div>
 </Demo>
 
 The filters in the Spotify mobile app are a great example of elegant UI design. They function as tabs, and when you activate one, only the selected filter remains visible alongside a reset button while the rest fade away.
 
-While the real app includes nested options for some filters (like playlists: "By you", "By Spotify", etc.), I simplified things a bit keeping it to only one level. When no filter is selected, all buttons are displayed. Once a filter is activated, a reset button appears, and the active filter smoothly transitions to a new position next to the reset button based on its original location. The other buttons fade out by setting their opacity to 0. [See all implementation details here](https://github.com/vgarmes/vgarmes.github.io/blob/main/src/components/demos/spotify-filters.tsx).
+Some filters also have their own nested options. Tap "Playlists" and a new set of subfilters slides in: "By you", "By Spotify", "Downloaded". Tap one of those and it stacks right next to "Playlists", while its siblings fade out. Tapping an active filter undoes just that step, and the reset button clears everything.
+
+To make this work, the layout is computed in JavaScript. Every chip (categories, all subfilters and the reset button) is always rendered and absolutely positioned. On each change I measure the chips' widths, work out which ones should be visible and in what order, and give each one an `x` offset. Hidden chips stay parked where they would sit if shown, so they fade out in place and fade back in at the right spot. The motion itself is plain CSS transitions on `transform` and `opacity`, which means clicking quickly retargets the animation mid-flight instead of jumping. [See all implementation details here](https://github.com/vgarmes/portfolio-next/blob/main/src/components/demos/spotify-filters.tsx).
