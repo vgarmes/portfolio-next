@@ -5,10 +5,10 @@ export const NowContent: React.FC = () => {
   return (
     <div className="space-y-7">
       <p>
-        Developing taste by surrounding myself with the work of people like Emil
-        Kowalski, Paco Coursey, Rauno Freiberg, Jhey Tompkins, shadcn. Studying
-        why certain interfaces feel great and timeless and bringing those ideas
-        into my own work.
+        Going through a “phase” of returning to{" "}
+        <Link href="/writing/going-analog">analog things</Link>. Drawn to the
+        tech I grew up with and to timeless, minimalistic interfaces, almost
+        terminal-like.
       </p>
       <p>
         Listening to drum & bass and jungle-music that brings back the nostalgia
@@ -19,7 +19,15 @@ export const NowContent: React.FC = () => {
         >
           This playlist
         </Link>{" "}
-        is a curation of some of my favorites.
+        is a curation of some of my favorites. And lately,{" "}
+        <Link
+          isExternal={true}
+          href="https://open.spotify.com/playlist/6Jzz5GtDPfO9bMSEeHdrYd?si=039c8315ff0d474e"
+        >
+          dungeon synth
+        </Link>
+        , the soundtrack to playing HeroQuest and losing myself in dark fantasy
+        worlds.
       </p>
     </div>
   );
