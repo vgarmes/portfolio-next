@@ -1,6 +1,5 @@
 "use client";
 
-import { Demo } from "@/components/demo";
 import clsx from "clsx";
 import { useId, useState, type FormEvent } from "react";
 import styles from "./paper-form.module.css";
@@ -31,7 +30,7 @@ export const PaperForm: React.FC = () => {
   };
 
   return (
-    <Demo>
+    <div className="relative z-0 my-8 w-full overflow-hidden rounded-lg border shadow-sm">
       <div className={styles.sheet}>
         <div className={styles.fingerprint} aria-hidden />
 
@@ -117,6 +116,6 @@ export const PaperForm: React.FC = () => {
           <span>2026</span>
         </footer>
       </div>
-    </Demo>
+    </div>
   );
 };
