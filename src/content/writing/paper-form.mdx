@@ -1,0 +1,54 @@
+---
+title: "Paper Form"
+date: 2026-11-10
+description: "Recreating the printed-on-paper look of Linear's Orbit site."
+tags: ["crafting", "design", "web development"]
+draft: true
+---
+
+import { PaperForm } from "@/components/demos/paper-form.tsx";
+
+Everything Linear does, they do with so much taste.
+
+I especially enjoy their thing for retro looks. They usually play with diagrams that look like a terminal or markdown, or with dithering, and this time they went with a whole site that looks printed on paper: [Orbit](https://orbit.linear.app/), the site for their upcoming conference.
+
+So I had to try it on a little form.
+
+<PaperForm />
+
+The look comes from three textures, but the interesting part is how they're used.
+
+## Grain as a mask
+
+The grain isn't laid on top of the text. It's used as a mask, so the speckles knock tiny holes in the ink, as if it didn't fully transfer to the paper. Every piece of "ink" gets it: titles, labels, inputs, even the underlines of the fields. A half-pixel text shadow in the text's own color adds a bit of ink bleed.
+
+```css title="paper-form.module.css"
+.ink {
+  text-shadow: 0 0 0.5px currentColor;
+  mask: url(/textures/grain.webp) 0 0 / 128px 128px;
+}
+```
+
+The button does the opposite: a white layer masked to the _inverse_ of the grain, so the solid block gets white flecks where the ink didn't take.
+
+## A paper tile over everything
+
+Then a paper texture is tiled over the whole sheet with `mix-blend-mode: darken`. Because it sits on top, it textures the ink as well as the paper, and that's what makes it read as printed instead of just placed on a beige background.
+
+```css title="paper-form.module.css"
+.sheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: url(/textures/paper-tile.avif) 0 0 / 158px 158px;
+  mix-blend-mode: darken;
+  opacity: 0.3;
+}
+```
+
+## Fingerprints
+
+Finally, the details. A scanned fingerprint with `mix-blend-mode: multiply` at very low opacity, sitting in a corner like someone handled the sheet. You barely notice it, which is the point.
+
+The textures in this demo are Linear's, taken from the Orbit site, so all the credit goes to them.
