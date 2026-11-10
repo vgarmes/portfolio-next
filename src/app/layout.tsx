@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Victor Mestre",
+  title: "Victor Garcia Mestre",
   description:
-    "Personal website of Victor Mestre, a frontend engineer based in Copenhagen, Denmark.",
+    "Personal website of Victor Garcia Mestre, a design engineer based in Copenhagen, Denmark.",
 };
 
 export default function RootLayout({

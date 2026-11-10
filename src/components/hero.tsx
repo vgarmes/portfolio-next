@@ -6,10 +6,10 @@ export const Hero: React.FC = () => {
     <section className="mb-8">
       <header className="mb-16 flex flex-col items-start">
         <NextLink className="inline-block font-medium no-underline" href="/">
-          Victor Mestre
+          Victor Garcia Mestre
         </NextLink>
         <span className="text-medium text-muted-foreground leading-none font-medium">
-          Frontend Engineer
+          Design Engineer
         </span>
       </header>
 
