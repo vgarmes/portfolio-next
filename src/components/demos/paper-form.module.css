@@ -1,0 +1,275 @@
+/*
+ * Printed-on-paper form, ported from orbit.linear.app.
+ *
+ * Three textures do the work:
+ * - grain.webp is used as a MASK on every piece of "ink" (text, keylines,
+ *   inputs), so ink shows speckled gaps like it didn't fully transfer.
+ *   A 0.5px text-shadow in currentColor adds a hint of ink bleed.
+ * - paper-tile.avif sits above everything with mix-blend-mode: darken,
+ *   adding paper fibre to both the sheet and the ink.
+ * - fingerprint.webp is a faint multiply smudge.
+ */
+
+.sheet {
+  --grain: url(/textures/grain.webp) 0 0 / 256px 256px;
+  --grain-fine: url(/textures/grain.webp) 0 0 / 128px 128px;
+  --soften: 0 0 0.5px currentColor;
+
+  --paper: #f7f6f3;
+  --ink-1: #1c1c1e;
+  --ink-2: #48484c;
+  --ink-3: #7a7a7f;
+  --ink-4: #aeaeb3;
+  --ink-red: #c2382d;
+
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
+  width: 100%;
+  padding: 32px;
+  background: var(--paper);
+  color: var(--ink-1);
+  font-size: 15px;
+  line-height: 20px;
+}
+
+@media (max-width: 480px) {
+  .sheet {
+    padding: 24px 20px 28px;
+  }
+}
+
+/* Paper fibre over the whole sheet, ink included */
+.sheet::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: url(/textures/paper-tile.avif) 0 0 / 158px 158px;
+  mix-blend-mode: darken;
+  opacity: 0.3;
+}
+
+/* Anything printed */
+.ink {
+  text-shadow: var(--soften);
+  -webkit-mask: var(--grain-fine);
+  mask: var(--grain-fine);
+}
+
+.fingerprint {
+  position: absolute;
+  right: 6px;
+  bottom: 14px;
+  width: 112px;
+  aspect-ratio: 1;
+  pointer-events: none;
+  background: url(/textures/fingerprint.webp) 50% / cover no-repeat;
+  mix-blend-mode: multiply;
+  opacity: 0.16;
+  scale: -1 1;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  color: var(--ink-2);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.folio {
+  color: var(--ink-3);
+}
+
+.rule {
+  height: 1px;
+  margin: 16px 0 24px;
+  background: var(--ink-3);
+  mix-blend-mode: darken;
+  opacity: 0.35;
+  -webkit-mask: var(--grain);
+  mask: var(--grain);
+}
+
+.title {
+  margin: 0 0 4px;
+  font-size: 22px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.lede {
+  margin: 0 0 28px;
+  color: var(--ink-2);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.field {
+  --keyline-ink: var(--ink-4);
+  position: relative;
+  display: grid;
+  gap: 4px;
+}
+
+.field > span {
+  color: var(--ink-2);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* The printed underline. A 1px gradient line inside a 9px box, so the
+   grain mask has room to bite into it. */
+.field::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -4px;
+  height: 9px;
+  pointer-events: none;
+  background: linear-gradient(var(--keyline-ink), var(--keyline-ink)) 0 4px /
+    100% 1px no-repeat;
+  -webkit-mask: var(--grain-fine);
+  mask: var(--grain-fine);
+}
+
+.field:has(.input:focus-visible) {
+  --keyline-ink: var(--ink-1);
+}
+
+.field:has(.input[aria-invalid="true"]) {
+  --keyline-ink: var(--ink-red);
+}
+
+.input {
+  min-width: 0;
+  padding: 0 0 8px;
+  color: inherit;
+  font: inherit;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+}
+
+.input::placeholder {
+  color: var(--ink-1);
+  opacity: 0.35;
+}
+
+/* iOS zooms inputs under 16px */
+@supports (-webkit-touch-callout: none) {
+  .input {
+    font-size: 16px;
+  }
+}
+
+.submit {
+  position: relative;
+  margin-top: 8px;
+  padding: 12px 24px;
+  color: #fff;
+  font: inherit;
+  font-weight: 500;
+  background: none;
+  border: 0;
+  border-radius: 1px;
+  cursor: pointer;
+}
+
+/* Solid ink block */
+.submit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--ink-2);
+  transition: background-color 0.15s ease-out;
+}
+
+/* White speckle on the inverse of the grain: ink that didn't take */
+.submit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: #fff;
+  opacity: 0.15;
+  -webkit-mask:
+    var(--grain-fine),
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    var(--grain-fine),
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+.submit span {
+  position: relative;
+  text-shadow: var(--soften);
+}
+
+.submit:focus-visible {
+  outline: 1px solid var(--ink-1);
+  outline-offset: 2px;
+}
+
+.submit:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+@media (hover: hover) {
+  .submit:hover:not(:disabled)::before {
+    background: var(--ink-1);
+    transition: none;
+  }
+}
+
+.status {
+  margin: 0;
+  color: var(--ink-3);
+  font-size: 13px;
+}
+
+.status[role="alert"] {
+  color: var(--ink-red);
+}
+
+.stamp {
+  margin: 8px 0 0;
+  color: var(--ink-1);
+}
+
+.reset {
+  margin-top: 20px;
+  padding: 0;
+  color: var(--ink-2);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--ink-4);
+  text-underline-offset: 3px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.colophon {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 32px;
+  color: var(--ink-3);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
