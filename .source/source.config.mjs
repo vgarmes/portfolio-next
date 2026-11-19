@@ -12,17 +12,23 @@ import {
   frontmatterSchema
 } from "fumadocs-mdx/config";
 import * as z from "zod";
+var postSchema = frontmatterSchema.extend({
+  title: z.string(),
+  date: z.coerce.date(),
+  image: z.object({
+    src: z.string(),
+    alt: z.string()
+  }).optional()
+});
 var posts = defineCollections({
   type: "doc",
   dir: "src/content/writing",
-  schema: frontmatterSchema.extend({
-    title: z.string(),
-    date: z.coerce.date(),
-    image: z.object({
-      src: z.string(),
-      alt: z.string()
-    }).optional()
-  })
+  schema: postSchema
+});
+var craft = defineCollections({
+  type: "doc",
+  dir: "src/content/craft",
+  schema: postSchema
 });
 function parseLineNumber(str, data) {
   return str.replace(/lineNumbers=(\d+)|lineNumbers/, (_, ...args) => {
@@ -62,6 +68,7 @@ var source_config_default = defineConfig({
   }
 });
 export {
+  craft,
   source_config_default as default,
   posts
 };

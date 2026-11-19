@@ -1,16 +1,20 @@
 import { cache } from "react";
-import { source } from "./source";
+import { craftSource, writingSource } from "./source";
 
-export const getPost = cache((slug: string) => {
-  const res = source.getPage([slug]);
-  return res;
-});
+/** The post collections on the site, each with its own index and URL prefix. */
+export const sections = {
+  writing: { title: "Writing", href: "/writing", source: writingSource },
+  craft: { title: "Craft", href: "/craft", source: craftSource },
+} as const;
 
-export const getPosts = cache(() => {
-  return source.getPages().sort((a, b) => {
-    const dateA = new Date(a.data.date);
-    const dateB = new Date(b.data.date);
+export type SectionKey = keyof typeof sections;
 
-    return dateB.getTime() - dateA.getTime();
-  });
-});
+export const getPost = cache((section: SectionKey, slug: string) =>
+  sections[section].source.getPage([slug]),
+);
+
+export const getPosts = cache((section: SectionKey) =>
+  sections[section].source
+    .getPages()
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
+);

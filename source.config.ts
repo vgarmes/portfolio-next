@@ -13,19 +13,29 @@ import {
 } from "fumadocs-mdx/config";
 import * as z from "zod";
 
+const postSchema = frontmatterSchema.extend({
+  title: z.string(),
+  date: z.coerce.date(),
+  image: z
+    .object({
+      src: z.string(),
+      alt: z.string(),
+    })
+    .optional(),
+});
+
+/** Blog-style posts. */
 export const posts = defineCollections({
   type: "doc",
   dir: "src/content/writing",
-  schema: frontmatterSchema.extend({
-    title: z.string(),
-    date: z.coerce.date(),
-    image: z
-      .object({
-        src: z.string(),
-        alt: z.string(),
-      })
-      .optional(),
-  }),
+  schema: postSchema,
+});
+
+/** Small UI experiments, each built around an interactive demo. */
+export const craft = defineCollections({
+  type: "doc",
+  dir: "src/content/craft",
+  schema: postSchema,
 });
 
 function parseLineNumber(str: string, data: Record<string, unknown>) {

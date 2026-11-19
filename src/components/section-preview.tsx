@@ -1,15 +1,19 @@
-import { getPosts } from "@/lib/data";
+import { getPosts, sections, type SectionKey } from "@/lib/data";
 import { formatDate } from "@/lib/date";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "./link";
 import NextLink from "next/link";
 
-export const Writing: React.FC = () => {
-  const posts = getPosts();
+/** The homepage preview of a section: its latest five posts. */
+export const SectionPreview: React.FC<{ section: SectionKey }> = ({
+  section,
+}) => {
+  const posts = getPosts(section);
+  const { title, href } = sections[section];
 
   return (
     <section className="mt-16 space-y-5 sm:mt-32 sm:space-y-6">
-      <h3 className="font-medium">Writing</h3>
+      <h3 className="font-medium">{title}</h3>
       <ul className="flex flex-col gap-7 sm:gap-4">
         {posts.slice(0, 5).map((post) => (
           <li key={post.url}>
@@ -34,7 +38,7 @@ export const Writing: React.FC = () => {
         ))}
       </ul>
       <div className="flex items-center gap-2">
-        <Link href="/writing">All writing</Link>
+        <Link href={href}>All {title.toLowerCase()}</Link>
         <span className="text-muted-foreground text-sm">
           <ArrowUpRight className="size-4" />
         </span>
