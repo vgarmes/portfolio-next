@@ -17,4 +17,9 @@ export const projects: Project[] = [
       "A tracker for my video game collection: what I own, what I'm playing and what I've finished.",
     url: "https://game-lib.vercel.app/",
   },
+  {
+    title: "Craft",
+    description: "A collection of small UI experiments and interactions.",
+    url: "/craft",
+  },
 ];
