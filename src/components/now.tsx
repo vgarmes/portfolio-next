@@ -5,9 +5,14 @@ export const NowContent: React.FC = () => {
   return (
     <div className="space-y-7">
       <p>
-        Acquiring taste by exposure. In an era of AI slop, I’m drawn to quiet,
-        personal interfaces that feel made by someone. When a detail catches my
-        eye, I rebuild it to understand why it feels good.
+        Acquiring taste by exposure. I’m drawn to quiet, personal interfaces
+        that feel made by someone. When a detail catches my eye, I rebuild it to
+        understand why it feels good.
+      </p>
+      <p>
+        Maybe that’s also why I’m attracted to analog technology, a nostalgia
+        for a time when things were more naive and personal, and didn’t compete
+        for your attention.
       </p>
       <p>
         Listening to drum & bass and jungle that bring back memories of 90s
