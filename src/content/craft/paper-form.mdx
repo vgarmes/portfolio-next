@@ -1,12 +1,13 @@
 ---
-title: "Paper Form"
+title: "Paper & Pencil"
 date: 2026-11-10
-description: "Recreating the printed-on-paper look of Linear's Orbit site."
+description: "Recreating the printed paper and the pencil sketch of Linear's Orbit site."
 tags: ["crafting", "design", "web development"]
 draft: false
 ---
 
 import { PaperForm } from "@/components/demos/paper-form.tsx";
+import { OrbitSketch } from "@/components/demos/orbit-sketch.tsx";
 
 Everything Linear does, they do with so much taste.
 
@@ -51,4 +52,30 @@ Then a paper texture is tiled over the whole sheet with `mix-blend-mode: darken`
 
 Finally, the details. A scanned fingerprint with `mix-blend-mode: multiply` at very low opacity, sitting in a corner like someone handled the sheet. You barely notice it, which is the point.
 
-The textures in this demo are Linear's, taken from the Orbit site, so all the credit goes to them.
+## The sketch
+
+The other thing that caught my eye on Orbit is the drawing in the hero. Circles that fold sideways, concentric orbits and construction lines that keep erasing and redrawing themselves, like a page from a Da Vinci notebook. I dug into the site's JavaScript to see how it works, and rebuilt it.
+
+<OrbitSketch />
+
+On Orbit it's a WebGL shader on a single canvas, but the drawing itself is tiny: each scene is eight ellipses and eight lines. The folding circles aren't 3D at all. They're ellipses that keep the full height and shrink in width, which reads as a circle turning on its axis like a coin.
+
+```ts title="orbit-sketch.tsx"
+// [cx, cy, rx, ry, opacity, rotation]
+[720, 240, 240, 240, 0.4, 0], // a circle
+[360, 240, 120, 240, 0.4, 0], // half as wide: the circle turned 60°
+[60, 240, 60, 240, 0.4, 0],   // a quarter as wide: turned even further
+```
+
+Every shape has a pen with a tail and a head somewhere along its outline. When the scene changes, the shapes that are leaving get erased from the tail, then the new ones get drawn from the head, both sweeping left to right across the page. Shapes that appear in both scenes stay where they are, so only a few things move at once.
+
+I drew it with SVG instead. With `pathLength={1}` any path measures exactly one unit long, so the pen becomes a single dash:
+
+```ts title="orbit-sketch.tsx"
+// The visible stroke runs from the tail to the head.
+path.setAttribute("stroke-dasharray", `0 ${tail} ${head - tail} 2`);
+```
+
+A few more details make it feel drawn rather than animated. It updates at 24 frames per second instead of 60, like a hand-cranked film. The arrow along the axis breaks wherever a narrow circle crosses it, so it reads as passing behind. And the construction lines run past the frame, fading out like guides someone didn't bother to erase, with the same grain mask as the rest of the ink.
+
+The textures, the drawing and its timing are all Linear's, taken from the Orbit site, so all the credit goes to them.

@@ -1,0 +1,141 @@
+/*
+ * Orbit's hero drawing and the construction rules around it, drawn straight
+ * on the page in the theme's muted colour.
+ *
+ * Each rule is a 9px strip with a 1px gradient line through its middle, so
+ * the line fades in and out along its length. Positions are percentages of
+ * the 2:1 drawing so they scale with it.
+ */
+
+.frame {
+  --rule-ink: var(--muted-foreground);
+  --grain: url(/textures/grain.webp) 0 0 / 256px 256px;
+  --grain-fine: url(/textures/grain.webp) 0 0 / 128px 128px;
+  position: relative;
+  /* Room for the vertical rules, which run 21.7% of the height above the
+     drawing and 45% below (percentage margins are relative to the width). */
+  margin: 10.8333% 0 22.5%;
+}
+
+.drawing {
+  position: relative;
+  aspect-ratio: 2;
+}
+
+/* The drawing's frame */
+.drawing::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--muted-foreground);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: var(--muted-foreground);
+  -webkit-mask: var(--grain);
+  mask: var(--grain);
+}
+
+/* The handwritten figure number in the bottom-right corner. */
+.note {
+  position: absolute;
+  top: 91.0417%;
+  right: 2.0833%;
+  overflow: visible;
+  rotate: -2deg;
+  color: var(--muted-foreground);
+  fill: currentColor;
+  opacity: 0.4;
+  filter: drop-shadow(0 0 0.5px currentColor);
+  -webkit-mask: var(--grain-fine);
+  mask: var(--grain-fine);
+}
+
+/* The pen that reveals each digit through its mask. */
+.notePen {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.2px;
+  stroke-linejoin: round;
+}
+
+.rule {
+  --rule-stops:
+    transparent, var(--rule-ink) 20%, var(--rule-ink) 60%, transparent;
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.15;
+  -webkit-mask: var(--grain);
+  mask: var(--grain);
+}
+
+.horizontal {
+  height: 9px;
+  background: linear-gradient(90deg, var(--rule-stops)) 0 4px / 100% 1px
+    no-repeat;
+}
+
+.vertical {
+  width: 9px;
+  background: linear-gradient(180deg, var(--rule-stops)) 4px 0 / 1px 100%
+    no-repeat;
+}
+
+/* Horizontal rules: top and bottom edges, plus a longer centre axis. */
+.top,
+.bottom {
+  width: 133.333%;
+  left: -16.6667%;
+  opacity: 0.2;
+}
+.top {
+  --rule-stops:
+    transparent, var(--rule-ink) 20%, var(--rule-ink) 80%, transparent;
+  top: -4px;
+}
+.bottom {
+  --rule-stops:
+    transparent, var(--rule-ink) 15%, var(--rule-ink) 85%, transparent;
+  top: calc(100% - 5px);
+}
+.axis {
+  width: 150%;
+  left: -25%;
+  top: calc(50% - 5px);
+  opacity: 0.2;
+}
+
+/* Vertical rules at the quarters and the eighth. */
+.quarter,
+.threeQuarters,
+.eighth {
+  --rule-stops: transparent, var(--rule-ink) 28%, transparent;
+}
+.quarter,
+.threeQuarters {
+  height: 166.667%;
+  top: -21.667%;
+}
+.quarter {
+  left: calc(25% - 5px);
+}
+.threeQuarters {
+  left: calc(75% - 5px);
+}
+
+/* Drawn and erased with the first construction line in the drawing. */
+.eighth {
+  height: 133.333%;
+  top: -5%;
+  left: calc(12.5% - 5px);
+  clip-path: inset(
+    calc(var(--rule-tail, 0) * 100%) 0 calc((1 - var(--rule-head, 1)) * 100%)
+  );
+}
