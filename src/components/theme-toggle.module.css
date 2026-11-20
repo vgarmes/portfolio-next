@@ -1,0 +1,84 @@
+/*
+ * Fixed theme toggle in the top-right corner. Two mirrored half-filled
+ * circles share one grid cell; the `.dark` class next-themes puts on <html>
+ * decides which one shows, so the right icon renders before hydration.
+ */
+
+.anchor {
+  position: fixed;
+  top: max(16px, calc(16px + env(safe-area-inset-top, 0px)));
+  right: max(16px, calc(16px + env(safe-area-inset-right, 0px)));
+  z-index: 50;
+}
+
+.button {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted-foreground);
+  opacity: 0.55;
+  cursor: pointer;
+  transition:
+    opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    color 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Grow the hit area to 40px without changing the visual size */
+.button::before {
+  content: "";
+  position: absolute;
+  inset: -8px;
+}
+
+@media (hover: hover) {
+  .button:hover {
+    color: var(--foreground);
+    opacity: 1;
+  }
+}
+
+.button:focus-visible {
+  color: var(--foreground);
+  opacity: 1;
+  outline: 1px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.button:active {
+  transform: scale(0.92);
+  transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.icon {
+  grid-area: 1 / 1;
+  display: flex;
+  /*
+   * !important so the cross-fade still runs: next-themes' disableTransitionOnChange
+   * injects `* { transition: none !important }` while the theme flips, and this
+   * class selector out-specifies `*`.
+   */
+  transition: opacity 0.36s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.light {
+  opacity: 1;
+}
+
+.dark {
+  opacity: 0;
+}
+
+:global(.dark) .light {
+  opacity: 0;
+}
+
+:global(.dark) .dark {
+  opacity: 1;
+}

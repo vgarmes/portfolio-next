@@ -1,5 +1,3 @@
-import { ThemeSwitcher } from "./theme-switcher";
-
 const Footer: React.FC = () => {
   return (
     // Top rule fades out towards both edges, like the construction lines in the Orbit sketch.
@@ -8,7 +6,6 @@ const Footer: React.FC = () => {
         <p className="text-muted-foreground text-xs">
           No matter where you go, everyone’s connected
         </p>
-        <ThemeSwitcher />
       </div>
     </footer>
   );

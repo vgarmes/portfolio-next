@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Footer from "@/components/footer";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
@@ -37,6 +38,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <ThemeToggle />
           <div className="overflow-x-clip px-6">
             <main className="mx-auto flex min-h-[calc(100dvh-var(--footer-height))] max-w-(--content-width) flex-col py-12 pb-10 lg:py-32">
               {children}
