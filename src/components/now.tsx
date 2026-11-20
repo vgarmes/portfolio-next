@@ -5,10 +5,9 @@ export const NowContent: React.FC = () => {
   return (
     <div className="space-y-7">
       <p>
-        Surrounded by increasingly generic, AI-generated interfaces, I’ve been
-        craving things that feel more personal and made by someone. Currently
-        drawn to terminal UIs, Neocities sites, paper textures, dithering and
-        the small imperfections that give them character.
+        Acquiring taste by exposure. In an era of AI slop, I’m drawn to quiet,
+        personal interfaces that feel made by someone. When a detail catches my
+        eye, I rebuild it to understand why it feels good.
       </p>
       <p>
         Listening to drum & bass and jungle that bring back memories of 90s
