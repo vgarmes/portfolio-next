@@ -1,0 +1,80 @@
+/*
+ * The small square sketch, in the theme's muted colour with the same grain
+ * as the big one. Its size comes from the parent (width); the construction
+ * rules overhang the square like crop marks.
+ */
+
+.frame {
+  --rule-ink: var(--muted-foreground);
+  --grain: url(/textures/grain.webp) 0 0 / 256px 256px;
+  position: relative;
+  aspect-ratio: 1;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+
+/* The drawing's frame */
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--muted-foreground);
+  opacity: 0.2;
+  pointer-events: none;
+}
+
+.lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  -webkit-mask: var(--grain);
+  mask: var(--grain);
+}
+
+.rule {
+  --rule-stops:
+    transparent, var(--rule-ink) 25%, var(--rule-ink) 75%, transparent;
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.25;
+  -webkit-mask: var(--grain);
+  mask: var(--grain);
+}
+
+.horizontal {
+  height: 9px;
+  width: 150%;
+  left: -25%;
+  background: linear-gradient(90deg, var(--rule-stops)) 0 4px / 100% 1px
+    no-repeat;
+}
+
+.vertical {
+  width: 9px;
+  height: 150%;
+  top: -25%;
+  background: linear-gradient(180deg, var(--rule-stops)) 4px 0 / 1px 100%
+    no-repeat;
+}
+
+.top {
+  top: -4px;
+}
+.bottom {
+  top: calc(100% - 5px);
+}
+/* The horizontal axis through the middle, longer than the edges. */
+.axis {
+  top: calc(50% - 5px);
+  width: 200%;
+  left: -50%;
+  opacity: 0.35;
+}
+.left {
+  left: -4px;
+}
+.right {
+  left: calc(100% - 5px);
+}

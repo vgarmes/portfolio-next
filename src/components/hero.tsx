@@ -1,10 +1,12 @@
 import NextLink from "next/link";
 import { Link } from "@/components/link";
+import { OrbitMark } from "@/components/orbit-mark";
 
 export const Hero: React.FC = () => {
   return (
     <section className="mb-8">
       <header className="mb-16 flex flex-col items-start">
+        <OrbitMark className="mb-8 w-16" />
         <NextLink className="inline-block font-medium no-underline" href="/">
           Victor Garcia Mestre
         </NextLink>
