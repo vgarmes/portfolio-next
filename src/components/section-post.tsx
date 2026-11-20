@@ -5,7 +5,6 @@ import { Undo2 } from "lucide-react";
 import { mdxComponents } from "@/mdx-components";
 import ArticleHeader from "@/components/article-header";
 import { TableOfContents } from "@/components/table-of-contents";
-import { PostStats } from "@/components/post-stats";
 import { BackTopButton } from "@/components/back-top-button";
 import { getPost, getPosts, sections, type SectionKey } from "@/lib/data";
 
@@ -47,8 +46,7 @@ export const SectionPost: React.FC<{ section: SectionKey; slug: string }> = ({
       <div className="mt-12 flex-1 pb-6">
         <Mdx components={mdxComponents} />
       </div>
-      <div className="flex items-center justify-between pt-4">
-        <PostStats slug={slug} />
+      <div className="flex items-center justify-end pt-4">
         <BackTopButton />
       </div>
     </article>
