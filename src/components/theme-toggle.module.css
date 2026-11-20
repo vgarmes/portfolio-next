@@ -1,14 +1,14 @@
 /*
- * Fixed theme toggle in the top-right corner. Two mirrored half-filled
+ * Theme toggle at the right end of the footer. Two mirrored half-filled
  * circles share one grid cell; the `.dark` class next-themes puts on <html>
  * decides which one shows, so the right icon renders before hydration.
  */
 
 .anchor {
-  position: fixed;
-  top: max(16px, calc(16px + env(safe-area-inset-top, 0px)));
-  right: max(16px, calc(16px + env(safe-area-inset-right, 0px)));
-  z-index: 50;
+  display: flex;
+  /* The 12px glyph sits centred in a 24px button; pull it out so the glyph's
+   * edge lines up with the right edge of the content column. */
+  margin-right: -6px;
 }
 
 .button {
