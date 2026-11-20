@@ -5,14 +5,16 @@ import { OrbitMark } from "@/components/orbit-mark";
 export const Hero: React.FC = () => {
   return (
     <section className="mb-8">
-      <header className="mb-16 flex flex-col items-start">
-        <OrbitMark className="mb-8 w-16" />
-        <NextLink className="inline-block font-medium no-underline" href="/">
-          Victor Garcia Mestre
-        </NextLink>
-        <span className="text-medium text-muted-foreground leading-none font-medium">
-          Design Engineer
-        </span>
+      <header className="mb-16 flex items-center justify-between gap-8">
+        <div className="flex flex-col items-start">
+          <NextLink className="inline-block font-medium no-underline" href="/">
+            Victor Garcia Mestre
+          </NextLink>
+          <span className="text-medium text-muted-foreground leading-none font-medium">
+            Design Engineer
+          </span>
+        </div>
+        <OrbitMark className="w-16" />
       </header>
 
       <div className="space-y-8">
