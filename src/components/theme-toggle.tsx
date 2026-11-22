@@ -17,8 +17,8 @@ import styles from "./theme-toggle.module.css";
  *
  * The control is a real <input type="checkbox" switch>, invisible and laid
  * over the icons. iOS Safari has no navigator.vibrate, but it ticks when a
- * finger toggles a switch, even an invisible one (a switch toggled from
- * script no longer ticks since iOS 26.2). Android gets navigator.vibrate.
+ * finger toggles a switch, even an invisible one (on iOS 27, a switch
+ * toggled from script doesn't tick). Android gets navigator.vibrate.
  */
 const noop = () => () => {};
 
