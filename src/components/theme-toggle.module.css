@@ -39,11 +39,20 @@
     transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* Grow the hit area to 40px without changing the visual size */
-.button::before {
-  content: "";
+/*
+ * The real control: an invisible switch over the icons, grown to a 40px hit
+ * area without changing the visual size. Tapping it is what makes iOS tick.
+ */
+.switch {
   position: absolute;
   inset: -8px;
+  z-index: 1;
+  width: auto;
+  height: auto;
+  margin: 0;
+  opacity: 0;
+  appearance: none;
+  cursor: pointer;
 }
 
 @media (hover: hover) {
@@ -53,14 +62,14 @@
   }
 }
 
-.button:focus-visible {
+.button:has(.switch:focus-visible) {
   color: var(--foreground);
   opacity: 1;
   outline: 1px solid var(--ring);
   outline-offset: 2px;
 }
 
-.button:active {
+.button:has(.switch:active) {
   transform: scale(0.92);
   transition: transform 0.14s cubic-bezier(0.22, 1, 0.36, 1);
 }
