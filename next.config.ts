@@ -13,6 +13,8 @@ const CRAFT_SLUGS = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Let phones on the local network load dev assets (testing on a device).
+  allowedDevOrigins: ["192.168.*.*"],
   // UI experiments moved from /writing to /craft; keep their old links working.
   async redirects() {
     return CRAFT_SLUGS.map((slug) => ({
