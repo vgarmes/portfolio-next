@@ -26,6 +26,12 @@
   --ring: oklch(0.708 0 0);
   --content-width: 640px;
   --footer-height: 56px;
+  /*
+   * Paper grain, used as a mask on "ink" so specks knock holes in it. Two
+   * fixed tiers: --grain for line work, --grain-fine for text and small marks.
+   */
+  --grain: url(/textures/grain.webp) 0 0 / 256px 256px;
+  --grain-fine: url(/textures/grain.webp) 0 0 / 128px 128px;
 }
 
 .dark {

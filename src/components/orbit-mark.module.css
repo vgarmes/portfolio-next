@@ -6,7 +6,6 @@
 
 .frame {
   --rule-ink: var(--muted-foreground);
-  --grain: url(/textures/grain.webp) 0 0 / 256px 256px;
   position: relative;
   aspect-ratio: 1;
   flex-shrink: 0;
@@ -41,6 +40,13 @@
   opacity: 0.25;
   -webkit-mask: var(--grain);
   mask: var(--grain);
+}
+
+/* At small sizes the mark counts as a small mark, not line work */
+.fine .lines,
+.fine .rule {
+  -webkit-mask: var(--grain-fine);
+  mask: var(--grain-fine);
 }
 
 .horizontal {

@@ -9,8 +9,6 @@
 
 .frame {
   --rule-ink: var(--muted-foreground);
-  --grain: url(/textures/grain.webp) 0 0 / 256px 256px;
-  --grain-fine: url(/textures/grain.webp) 0 0 / 128px 128px;
   position: relative;
   /* Room for the vertical rules, which run 21.7% of the height above the
      drawing and 45% below (percentage margins are relative to the width). */

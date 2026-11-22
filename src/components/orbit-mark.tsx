@@ -257,7 +257,14 @@ function paint(root: Element, f: Frame) {
 
 const INITIAL = frameAt(0);
 
-export function OrbitMark({ className }: { className?: string }) {
+export function OrbitMark({
+  className,
+  fine = false,
+}: {
+  className?: string;
+  /** Use the fine grain (--grain-fine), for the mark at small sizes. */
+  fine?: boolean;
+}) {
   const rootRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -303,7 +310,11 @@ export function OrbitMark({ className }: { className?: string }) {
   const f = INITIAL;
 
   return (
-    <div ref={rootRef} className={clsx(styles.frame, className)} aria-hidden>
+    <div
+      ref={rootRef}
+      className={clsx(styles.frame, fine && styles.fine, className)}
+      aria-hidden
+    >
       <svg
         viewBox={`0 0 ${SIZE} ${SIZE}`}
         className={styles.lines}

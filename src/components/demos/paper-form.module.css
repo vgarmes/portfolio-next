@@ -11,8 +11,6 @@
  */
 
 .sheet {
-  --grain: url(/textures/grain.webp) 0 0 / 256px 256px;
-  --grain-fine: url(/textures/grain.webp) 0 0 / 128px 128px;
   --soften: 0 0 0.5px currentColor;
 
   --paper: #f7f6f3;
