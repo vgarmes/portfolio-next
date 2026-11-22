@@ -1,7 +1,7 @@
 import { getNowPlaying } from "@/lib/now-playing";
-import { NowPlayingTicker } from "./now-playing-ticker";
+import { NowPlayingStack } from "./now-playing-stack";
 
 export const NowPlaying: React.FC = async () => {
   const items = await getNowPlaying();
-  return <NowPlayingTicker items={items} />;
+  return <NowPlayingStack items={items} />;
 };
