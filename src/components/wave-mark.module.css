@@ -1,0 +1,22 @@
+/*
+ * The wave sketch: a 2:1 box in the theme's muted ink, with no border (the
+ * lines, edge to edge and top to bottom, outline it themselves). Its size
+ * comes from the parent (width).
+ */
+
+.frame {
+  position: relative;
+  aspect-ratio: 2;
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+
+/* The lines get the paper grain, the fine tier for a small mark. */
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  -webkit-mask: var(--grain-fine);
+  mask: var(--grain-fine);
+}
