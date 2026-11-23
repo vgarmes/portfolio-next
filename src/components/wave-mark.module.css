@@ -9,6 +9,9 @@
   aspect-ratio: 2;
   flex-shrink: 0;
   color: var(--muted-foreground);
+  /* Clicking moves the ripples' origin. */
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* The lines get the paper grain, the fine tier for a small mark. */

@@ -6,7 +6,7 @@ export const Hero: React.FC = () => {
   return (
     <section className="mb-8">
       <header className="mb-16 flex flex-col items-start">
-        <WaveMark className="mb-8 w-26" />
+        <WaveMark className="mb-8 w-50" />
         <NextLink className="inline-block font-medium no-underline" href="/">
           Victor Garcia Mestre
         </NextLink>
