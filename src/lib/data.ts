@@ -9,12 +9,20 @@ export const sections = {
 
 export type SectionKey = keyof typeof sections;
 
-export const getPost = cache((section: SectionKey, slug: string) =>
-  sections[section].source.getPage([slug]),
-);
+// Drafts are visible while developing and hidden everywhere in production:
+// left out of every list, and their URL is a 404.
+const showDrafts = process.env.NODE_ENV === "development";
+const isPublic = (page: { data: { draft: boolean } }) =>
+  showDrafts || !page.data.draft;
+
+export const getPost = cache((section: SectionKey, slug: string) => {
+  const page = sections[section].source.getPage([slug]);
+  return page && isPublic(page) ? page : undefined;
+});
 
 export const getPosts = cache((section: SectionKey) =>
   sections[section].source
     .getPages()
+    .filter(isPublic)
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
 );

@@ -15,6 +15,8 @@ import * as z from "zod";
 var postSchema = frontmatterSchema.extend({
   title: z.string(),
   date: z.coerce.date(),
+  /** Drafts show in `next dev` but are left out of production builds. */
+  draft: z.boolean().default(false),
   image: z.object({
     src: z.string(),
     alt: z.string()
