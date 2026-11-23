@@ -1,0 +1,24 @@
+---
+title: "Seed Fingerprint"
+date: 2026-11-23
+description: "A fingerprint drawn from any text, with one pen and no crossings"
+tags: ["generative", "svg"]
+draft: true
+---
+
+import {
+  SeedFingerprintDemo,
+  FingerprintAvatarsDemo,
+} from "@/components/demos/seed-fingerprint";
+
+Type anything and it gets a fingerprint. The same text always draws the same print, and changing a single letter draws a different one. It's drawn like a pen plotter would draw it, after [dhrv.pw's plotter](https://dhrv.pw/experiments/plotter): one pen, no fills, and a ridge stops before it crowds one already on the paper.
+
+<SeedFingerprintDemo />
+
+The text is hashed into 32 hex characters, whatever its length. The first three (in orange) choose what you notice at a glance: whether it's an arch, a loop or a whorl, which way a loop opens, and the tilt. The rest seed everything finer: where the cores and deltas sit, how the ridges wander, and where they end or fork. Those endings and forks, the minutiae, are what real prints are matched by.
+
+## As an avatar
+
+The same idea makes an avatar, like the ones that pick a background colour from your name. The print is cropped to a circle around its core, with fewer, thicker ridges so it still reads at 24px, and the hash also picks its hue. Names ignore case, so "Ada" and "ada " get the same avatar.
+
+<FingerprintAvatarsDemo />

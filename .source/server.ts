@@ -1,21 +1,22 @@
 // @ts-nocheck
-import * as __fd_glob_20 from "../src/content/writing/upload-images-with-rails-and-cloudinary.mdx?collection=posts"
-import * as __fd_glob_19 from "../src/content/writing/understanding-react-server-components.mdx?collection=posts"
-import * as __fd_glob_18 from "../src/content/writing/terminal-setup-2025.mdx?collection=posts"
-import * as __fd_glob_17 from "../src/content/writing/powershell-custom-prompt-setup.mdx?collection=posts"
-import * as __fd_glob_16 from "../src/content/writing/mise-as-nvm-replacement.mdx?collection=posts"
-import * as __fd_glob_15 from "../src/content/writing/migrating-blog-astro-to-nextjs.mdx?collection=posts"
-import * as __fd_glob_14 from "../src/content/writing/how-shadcn-documentation-is-built.mdx?collection=posts"
-import * as __fd_glob_13 from "../src/content/writing/going-analog.mdx?collection=posts"
-import * as __fd_glob_12 from "../src/content/writing/geocities-and-the-indie-web.mdx?collection=posts"
-import * as __fd_glob_11 from "../src/content/writing/custom-code-blocks-astro-mdx.mdx?collection=posts"
-import * as __fd_glob_10 from "../src/content/writing/build-your-own-react-router.mdx?collection=posts"
-import * as __fd_glob_9 from "../src/content/writing/astro-fonts-api-optimization.mdx?collection=posts"
-import * as __fd_glob_8 from "../src/content/writing/adding-likes-to-static-site.mdx?collection=posts"
-import * as __fd_glob_7 from "../src/content/craft/wave-ripples.mdx?collection=craft"
-import * as __fd_glob_6 from "../src/content/craft/vercel-relative-time-card.mdx?collection=craft"
-import * as __fd_glob_5 from "../src/content/craft/spotify-filters.mdx?collection=craft"
-import * as __fd_glob_4 from "../src/content/craft/sparkling-text.mdx?collection=craft"
+import * as __fd_glob_21 from "../src/content/writing/upload-images-with-rails-and-cloudinary.mdx?collection=posts"
+import * as __fd_glob_20 from "../src/content/writing/understanding-react-server-components.mdx?collection=posts"
+import * as __fd_glob_19 from "../src/content/writing/terminal-setup-2025.mdx?collection=posts"
+import * as __fd_glob_18 from "../src/content/writing/powershell-custom-prompt-setup.mdx?collection=posts"
+import * as __fd_glob_17 from "../src/content/writing/mise-as-nvm-replacement.mdx?collection=posts"
+import * as __fd_glob_16 from "../src/content/writing/migrating-blog-astro-to-nextjs.mdx?collection=posts"
+import * as __fd_glob_15 from "../src/content/writing/how-shadcn-documentation-is-built.mdx?collection=posts"
+import * as __fd_glob_14 from "../src/content/writing/going-analog.mdx?collection=posts"
+import * as __fd_glob_13 from "../src/content/writing/geocities-and-the-indie-web.mdx?collection=posts"
+import * as __fd_glob_12 from "../src/content/writing/custom-code-blocks-astro-mdx.mdx?collection=posts"
+import * as __fd_glob_11 from "../src/content/writing/build-your-own-react-router.mdx?collection=posts"
+import * as __fd_glob_10 from "../src/content/writing/astro-fonts-api-optimization.mdx?collection=posts"
+import * as __fd_glob_9 from "../src/content/writing/adding-likes-to-static-site.mdx?collection=posts"
+import * as __fd_glob_8 from "../src/content/craft/wave-ripples.mdx?collection=craft"
+import * as __fd_glob_7 from "../src/content/craft/vercel-relative-time-card.mdx?collection=craft"
+import * as __fd_glob_6 from "../src/content/craft/spotify-filters.mdx?collection=craft"
+import * as __fd_glob_5 from "../src/content/craft/sparkling-text.mdx?collection=craft"
+import * as __fd_glob_4 from "../src/content/craft/seed-fingerprint.mdx?collection=craft"
 import * as __fd_glob_3 from "../src/content/craft/scratch-card.mdx?collection=craft"
 import * as __fd_glob_2 from "../src/content/craft/paper-form.mdx?collection=craft"
 import * as __fd_glob_1 from "../src/content/craft/flip-dot-matrix.mdx?collection=craft"
@@ -28,6 +29,6 @@ const create = server<typeof Config, import("fumadocs-mdx/runtime/types").Intern
   }
 }>({"doc":{"passthroughs":["extractedReferences"]}});
 
-export const craft = await create.doc("craft", "src/content/craft", {"animated-tabs.mdx": __fd_glob_0, "flip-dot-matrix.mdx": __fd_glob_1, "paper-form.mdx": __fd_glob_2, "scratch-card.mdx": __fd_glob_3, "sparkling-text.mdx": __fd_glob_4, "spotify-filters.mdx": __fd_glob_5, "vercel-relative-time-card.mdx": __fd_glob_6, "wave-ripples.mdx": __fd_glob_7, });
+export const craft = await create.doc("craft", "src/content/craft", {"animated-tabs.mdx": __fd_glob_0, "flip-dot-matrix.mdx": __fd_glob_1, "paper-form.mdx": __fd_glob_2, "scratch-card.mdx": __fd_glob_3, "seed-fingerprint.mdx": __fd_glob_4, "sparkling-text.mdx": __fd_glob_5, "spotify-filters.mdx": __fd_glob_6, "vercel-relative-time-card.mdx": __fd_glob_7, "wave-ripples.mdx": __fd_glob_8, });
 
-export const posts = await create.doc("posts", "src/content/writing", {"adding-likes-to-static-site.mdx": __fd_glob_8, "astro-fonts-api-optimization.mdx": __fd_glob_9, "build-your-own-react-router.mdx": __fd_glob_10, "custom-code-blocks-astro-mdx.mdx": __fd_glob_11, "geocities-and-the-indie-web.mdx": __fd_glob_12, "going-analog.mdx": __fd_glob_13, "how-shadcn-documentation-is-built.mdx": __fd_glob_14, "migrating-blog-astro-to-nextjs.mdx": __fd_glob_15, "mise-as-nvm-replacement.mdx": __fd_glob_16, "powershell-custom-prompt-setup.mdx": __fd_glob_17, "terminal-setup-2025.mdx": __fd_glob_18, "understanding-react-server-components.mdx": __fd_glob_19, "upload-images-with-rails-and-cloudinary.mdx": __fd_glob_20, });
+export const posts = await create.doc("posts", "src/content/writing", {"adding-likes-to-static-site.mdx": __fd_glob_9, "astro-fonts-api-optimization.mdx": __fd_glob_10, "build-your-own-react-router.mdx": __fd_glob_11, "custom-code-blocks-astro-mdx.mdx": __fd_glob_12, "geocities-and-the-indie-web.mdx": __fd_glob_13, "going-analog.mdx": __fd_glob_14, "how-shadcn-documentation-is-built.mdx": __fd_glob_15, "migrating-blog-astro-to-nextjs.mdx": __fd_glob_16, "mise-as-nvm-replacement.mdx": __fd_glob_17, "powershell-custom-prompt-setup.mdx": __fd_glob_18, "terminal-setup-2025.mdx": __fd_glob_19, "understanding-react-server-components.mdx": __fd_glob_20, "upload-images-with-rails-and-cloudinary.mdx": __fd_glob_21, });

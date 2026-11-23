@@ -1,0 +1,58 @@
+/*
+ * The seeded fingerprint: ridges in the theme's ink with the paper grain
+ * knocked out of them, minutiae in an orange pen on top.
+ */
+
+/* The print is a button: clicking or tapping it has the pen draw it. */
+.button {
+  display: block;
+  width: 100%;
+  max-width: 20rem;
+  margin: 0 auto;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Clicks wait while the pen is drawing. */
+.button[data-drawing] {
+  cursor: default;
+}
+
+.button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+}
+
+.print {
+  display: block;
+  width: 100%;
+  color: var(--foreground);
+}
+
+.ridges {
+  -webkit-mask: var(--grain-fine);
+  mask: var(--grain-fine);
+}
+
+.ridge {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  /* With pathLength="1", one dash is the whole line; the draw animation
+     slides it in by moving the offset from 1 to 0. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+.marks {
+  color: oklch(0.68 0.19 45);
+  fill: none;
+  stroke: currentColor;
+}
+
+/* The three hex characters that choose pattern, side and tilt. */
+.visible {
+  color: oklch(0.68 0.19 45);
+}
