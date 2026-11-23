@@ -9,20 +9,26 @@ export const sections = {
 
 export type SectionKey = keyof typeof sections;
 
-// Drafts are visible while developing and hidden everywhere in production:
-// left out of every list, and their URL is a 404.
+// Drafts are unlisted in production: their URL works and the page is labeled
+// "Draft", but they are left out of every list. In development they are listed
+// too, so they can be worked on.
 const showDrafts = process.env.NODE_ENV === "development";
-const isPublic = (page: { data: { draft: boolean } }) =>
+const isListed = (page: { data: { draft: boolean } }) =>
   showDrafts || !page.data.draft;
 
-export const getPost = cache((section: SectionKey, slug: string) => {
-  const page = sections[section].source.getPage([slug]);
-  return page && isPublic(page) ? page : undefined;
-});
+/** Any post by slug, drafts included. */
+export const getPost = cache((section: SectionKey, slug: string) =>
+  sections[section].source.getPage([slug]),
+);
 
+/** Every post with a page, drafts included, for static generation. */
+export const getAllPosts = cache((section: SectionKey) =>
+  sections[section].source.getPages(),
+);
+
+/** The posts shown in lists, newest first. */
 export const getPosts = cache((section: SectionKey) =>
-  sections[section].source
-    .getPages()
-    .filter(isPublic)
+  getAllPosts(section)
+    .filter(isListed)
     .sort((a, b) => b.data.date.getTime() - a.data.date.getTime()),
 );

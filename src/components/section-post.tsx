@@ -6,11 +6,11 @@ import { mdxComponents } from "@/mdx-components";
 import ArticleHeader from "@/components/article-header";
 import { TableOfContents } from "@/components/table-of-contents";
 import { BackTopButton } from "@/components/back-top-button";
-import { getPost, getPosts, sections, type SectionKey } from "@/lib/data";
+import { getAllPosts, getPost, sections, type SectionKey } from "@/lib/data";
 
 // source.generateParams() only works with an optional catch-all route.
 export function postStaticParams(section: SectionKey): { slug: string }[] {
-  return getPosts(section).map((post) => ({ slug: post.slugs[0] }));
+  return getAllPosts(section).map((post) => ({ slug: post.slugs[0] }));
 }
 
 export function postMetadata(section: SectionKey, slug: string): Metadata {
@@ -42,7 +42,11 @@ export const SectionPost: React.FC<{ section: SectionKey; slug: string }> = ({
           <TableOfContents toc={page.data.toc} />
         </div>
       </aside>
-      <ArticleHeader title={page.data.title} date={page.data.date} />
+      <ArticleHeader
+        title={page.data.title}
+        date={page.data.date}
+        draft={page.data.draft}
+      />
       <div className="mt-12 flex-1 pb-6">
         <Mdx components={mdxComponents} />
       </div>
