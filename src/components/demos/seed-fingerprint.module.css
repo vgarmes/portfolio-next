@@ -41,8 +41,10 @@
   stroke-linecap: round;
   stroke-linejoin: round;
   /* With pathLength="1", one dash is the whole line; the draw animation
-     slides it in by moving the offset from 1 to 0. */
-  stroke-dasharray: 1;
+     slides it in by moving the offset to 0. The gap of 2 keeps the next
+     dash off the line, so no zero-length dash sits at either end: Safari
+     draws a round cap on one, which shows as a dot. */
+  stroke-dasharray: 1 2;
   stroke-dashoffset: 0;
 }
 

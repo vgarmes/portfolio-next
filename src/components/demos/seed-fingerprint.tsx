@@ -89,12 +89,21 @@ export function SeedFingerprintDemo() {
     const paths = Array.from(group.querySelectorAll("path"));
     const each = DRAW_MS * 0.35;
     const animations = paths.map((path, i) =>
-      path.animate([{ strokeDashoffset: "1" }, { strokeDashoffset: "0" }], {
-        duration: each,
-        delay: (i / Math.max(1, paths.length - 1)) * (DRAW_MS - each),
-        easing: "cubic-bezier(0.33, 0, 0.2, 1)",
-        fill: "backwards",
-      }),
+      // Starts just past 1 so the dash clears the line's start entirely, and
+      // stays transparent until its turn in case Safari still caps it.
+      path.animate(
+        [
+          { strokeDashoffset: "1.02", opacity: 0, offset: 0 },
+          { opacity: 1, offset: 0.02 },
+          { strokeDashoffset: "0", opacity: 1, offset: 1 },
+        ],
+        {
+          duration: each,
+          delay: (i / Math.max(1, paths.length - 1)) * (DRAW_MS - each),
+          easing: "cubic-bezier(0.33, 0, 0.2, 1)",
+          fill: "backwards",
+        },
+      ),
     );
     animationsRef.current = animations;
     setDrawing(true);
