@@ -8,8 +8,8 @@ import type { NowPlayingItem } from "@/lib/now-playing";
  *
  * - Covers overlap (negative margin) and each sits at a slight tilt (--rot).
  * - Hovering the stack spreads every cover sideways by its own --spread.
- * - Hovering (or focusing/tapping) a cover straightens it, scales it up,
- *   lifts it above its neighbours and reveals its label above.
+ * - Hovering (or tapping, on touch screens) a cover straightens it, scales
+ *   it up, lifts it above its neighbours and reveals its label above.
  *
  * The stack is right-aligned in the Now header, so the last cover stays put
  * and the others fan out to the left.
@@ -55,6 +55,8 @@ export const NowPlayingStack: React.FC<Props> = ({ items, className }) => {
           <span
             key={`${item.kind}-${item.title}`}
             // Focusable so a tap on touch screens (no hover) still reveals the label.
+            // The focus styles only apply without hover: on desktop a click would
+            // otherwise leave this cover open while you hover another one.
             tabIndex={-1}
             style={
               {
@@ -67,7 +69,7 @@ export const NowPlayingStack: React.FC<Props> = ({ items, className }) => {
             // The card inside does the moving, and only it catches the pointer.
             className={cn(
               "group/chip pointer-events-none -ml-2.5 inline-block shrink-0 outline-none first:ml-0",
-              "hover:z-10 focus:z-10",
+              "hover:z-10 [@media(hover:none)]:focus:z-10",
             )}
           >
             <span
@@ -75,7 +77,7 @@ export const NowPlayingStack: React.FC<Props> = ({ items, className }) => {
                 "pointer-events-none absolute -top-8 right-0 text-xs leading-4 whitespace-nowrap",
                 "translate-y-1 opacity-0 transition-[opacity,translate] duration-200 ease-out",
                 "group-hover/chip:translate-y-0 group-hover/chip:opacity-100",
-                "group-focus/chip:translate-y-0 group-focus/chip:opacity-100",
+                "[@media(hover:none)]:group-focus/chip:translate-y-0 [@media(hover:none)]:group-focus/chip:opacity-100",
                 "motion-reduce:translate-y-0",
               )}
             >
@@ -85,10 +87,10 @@ export const NowPlayingStack: React.FC<Props> = ({ items, className }) => {
             <span
               className={cn(
                 "bg-background pointer-events-auto block rounded-[6px] border p-[2px] shadow-sm",
-                "[translate:0] [transform:rotate(var(--rot))] transition-[transform,translate,box-shadow] will-change-transform",
-                "group-focus-within/stack:[translate:var(--spread)] group-hover/stack:[translate:var(--spread)]",
-                "group-hover/chip:[transform:rotate(0deg)_scale(1.55)] group-hover/chip:shadow-md",
-                "group-focus/chip:[transform:rotate(0deg)_scale(1.55)] group-focus/chip:shadow-md",
+                "[translate:0] [transform:rotate(var(--rot))] transition-[transform,translate,box-shadow]",
+                "[@media(hover:none)]:group-focus-within/stack:[translate:var(--spread)] group-hover/stack:[translate:var(--spread)]",
+                "group-hover/chip:[transform:rotate(0deg)_scale(1.5)] group-hover/chip:shadow-md",
+                "[@media(hover:none)]:group-focus/chip:[transform:rotate(0deg)_scale(1.5)] [@media(hover:none)]:group-focus/chip:shadow-md",
                 "motion-reduce:transition-none",
                 EASE,
               )}
